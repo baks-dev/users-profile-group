@@ -1,0 +1,13 @@
+admin:
+
+  page:
+    index: 'User profile role groups'
+    edit: 'Edit user profile role group'
+    new: 'Add user profile role group'
+    delete: 'Delete user profile role group'
+
+  breadcrumb:
+    index: 'User profile role groups'
+    edit: 'Edit user profile role group'
+    new: 'Add user profile role group'
+    delete: 'Delete user profile role group'
