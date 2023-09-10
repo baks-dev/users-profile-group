@@ -1,0 +1,30 @@
+<tr class="vertical-middle">
+	
+	<td>
+		{# Пользовательское меню #}
+		{{ include(_self|replace({ "card.html.twig": "_usecase.html.twig" })) }}
+	</td>
+
+	<td>
+		<a href="{{ path('ProfileGroup:admin.group.newedit.edit', { id: item.event }) }}"
+		   class="text-decoration-none"
+		>
+			{{ item.name }}
+		</a>
+	</td>
+
+	{% if is_granted('ROLE_ADMIN') %}
+		<td>
+			{{ item.users_profile_username }}
+		</td>
+		<td>
+			<a href='{{ path(app.current_route, {'authority' :  item.users_profile_id  }) }}'
+			   class="badge text-bg-light text-decoration-none"
+			>
+				Авторизоваться
+			</a>
+
+		</td>
+	{% endif %}
+
+</tr>

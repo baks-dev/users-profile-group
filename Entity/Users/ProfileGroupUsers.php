@@ -36,6 +36,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'profile_group_users')]
+#[ORM\Index(columns: ['profile', 'authority'])]
 class ProfileGroupUsers extends EntityState
 {
     public const TABLE = 'profile_group_users';
@@ -46,7 +47,7 @@ class ProfileGroupUsers extends EntityState
     #[Assert\NotBlank]
     #[ORM\Id]
     #[ORM\Column(type: GroupPrefix::TYPE)]
-    private GroupPrefix $prefix;
+    private readonly GroupPrefix $prefix;
 
     /**
      * Профиль пользователя в группе
@@ -54,8 +55,21 @@ class ProfileGroupUsers extends EntityState
     #[Assert\NotBlank]
     #[ORM\Id]
     #[ORM\Column(type: UserProfileUid::TYPE)]
-    private UserProfileUid $profile;
+    private readonly UserProfileUid $profile;
 
+    /**
+     * Доверенность профиля пользователя
+     */
+    #[ORM\Column(type: UserProfileUid::TYPE, nullable: true)]
+    private ?UserProfileUid $authority = null;
+
+    /**
+     * Prefix
+     */
+    public function getPrefix(): GroupPrefix
+    {
+        return $this->prefix;
+    }
 
     public function getDto($dto): mixed
     {

@@ -1,13 +1,33 @@
 admin:
 
   page:
-    index: 'User profile role groups'
-    edit: 'Edit user profile role group'
-    new: 'Add user profile role group'
-    delete: 'Delete user profile role group'
+    index: 'Role groups'
+    edit: 'Edit Role Group'
+    new: 'Add role group'
+    delete: 'Delete role group'
 
   breadcrumb:
     index: 'User profile role groups'
     edit: 'Edit user profile role group'
     new: 'Add user profile role group'
     delete: 'Delete user profile role group'
+
+
+  success:
+    new: 'Role group added successfully'
+    edit: 'Role group updated successfully'
+    delete: 'Role group successfully deleted to trash'
+    restore: 'Role group restored successfully'
+
+  danger:
+    new: '%s: Error adding role group'
+    edit: '%s: Error updating role group'
+    delete: '%s: Error deleting role group'
+    restore: '%s: Error restoring role group'
+
+  form:
+    locale:
+      label: 'Locale Settings'
+      name: 'Group Name'
+    label:
+      delete: 'Вы уверены, что желаете удалить группу'

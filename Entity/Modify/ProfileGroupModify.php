@@ -70,23 +70,23 @@ class ProfileGroupModify extends EntityEvent
     #[ORM\Column(type: UserUid::TYPE, nullable: true)]
     private ?UserUid $usr = null;
 
-    /** Ip адресс */
+    /** Ip адрес */
     #[Assert\NotBlank]
-    #[ORM\Column(name: 'user_ip', type: IpAddress::TYPE)]
-    private IpAddress $ipAddress;
+    #[ORM\Column(type: IpAddress::TYPE)]
+    private IpAddress $ip;
 
     /** User-agent */
     #[Assert\NotBlank]
-    #[ORM\Column(name: 'user_agent', type: Types::TEXT)]
-    private string $userAgent;
+    #[ORM\Column(type: Types::TEXT)]
+    private string $agent;
 
 
     public function __construct(ProfileGroupEvent $event)
     {
         $this->event = $event;
         $this->modDate = new DateTimeImmutable();
-        $this->ipAddress = new IpAddress('127.0.0.1');
-        $this->userAgent = 'console';
+        $this->ip = new IpAddress('127.0.0.1');
+        $this->agent = 'console';
         $this->action = new ModifyAction(ModifyActionEnum::NEW);
     }
 
@@ -94,8 +94,8 @@ class ProfileGroupModify extends EntityEvent
     {
         $this->modDate = new DateTimeImmutable();
         $this->action = new ModifyAction(ModifyActionEnum::UPDATE);
-        $this->ipAddress = new IpAddress('127.0.0.1');
-        $this->userAgent = 'console';
+        $this->ip = new IpAddress('127.0.0.1');
+        $this->agent = 'console';
     }
 
 
@@ -120,16 +120,16 @@ class ProfileGroupModify extends EntityEvent
     }
 
 
-    public function upModifyAgent(IpAddress $ipAddress, string $userAgent): void
+    public function upModifyAgent(IpAddress $ip, string $agent): void
     {
-        $this->ipAddress = $ipAddress;
-        $this->userAgent = $userAgent;
+        $this->ip = $ip;
+        $this->agent = $agent;
         $this->modDate = new DateTimeImmutable();
     }
 
-    public function setUser(UserUid|User|null $user): void
+    public function setUsr(UserUid|User|null $usr): void
     {
-        $this->user = $user instanceof User ? $user->getId() : $user;
+        $this->usr = $usr instanceof User ? $usr->getId() : $usr;
     }
 
     public function equals(ModifyActionEnum $action): bool

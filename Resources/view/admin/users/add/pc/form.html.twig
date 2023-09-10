@@ -1,0 +1,15 @@
+{% trans_default_domain 'groups.users' %}
+
+
+{{ form_row(form.profile, {
+    label: 'Профиль пользователя'|trans,
+     attr : { placeholder: 'Идентификатор профиля пользователя'|trans }
+}) }}
+
+
+{{ form_row(form.prefix, {
+    label: 'Группа ролей'|trans,
+    placeholder: 'Выберите группу из списка'|trans,
+    attr: { 'data-select' : 'select2' } })
+}}
+

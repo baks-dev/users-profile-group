@@ -1,0 +1,28 @@
+# Роль
+
+ROLE_PROFILE_GROUP:
+  name: 'Группы пользователей'
+  desc: 'Группы пользователей и их роли доступа'
+
+# Правила
+
+ROLE_PROFILE_GROUP_NEW:
+  name: 'Добавить'
+
+ROLE_PROFILE_GROUP_EDIT:
+  name: 'Редактировать'
+
+ROLE_PROFILE_GROUP_DELETE:
+  name: 'Удалить'
+
+
+ROLE_PROFILE_GROUP_USERS:
+  name: 'Доверености пользователей'
+  desc: 'Пользовтатели, которым выдается довереность и группы ролей'
+
+
+ROLE_PROFILE_GROUP_USERS_ADD:
+  name: 'Добавить'
+
+ROLE_PROFILE_GROUP_USERS_DELETE:
+  name: 'Удалить'

@@ -28,4 +28,6 @@ use BaksDev\Users\Profile\Group\Type\Prefix\Role\GroupRolePrefix;
 interface ProfileRoleInterface
 {
     public function getPrefix(): ?GroupRolePrefix;
+
+    public function isChecked(): bool;
 }

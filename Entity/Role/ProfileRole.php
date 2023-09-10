@@ -30,6 +30,7 @@ use BaksDev\Users\Profile\Group\Entity\Event\ProfileGroupEvent;
 use BaksDev\Users\Profile\Group\Entity\Role\Voter\ProfileVoter;
 use BaksDev\Users\Profile\Group\Type\Id\ProfileRoleUid;
 use BaksDev\Users\Profile\Group\Type\Prefix\Role\GroupRolePrefix;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use InvalidArgumentException;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -66,10 +67,10 @@ class ProfileRole extends EntityEvent
     #[ORM\Column(type: GroupRolePrefix::TYPE)]
     private GroupRolePrefix $prefix;
 
-
     /**
      * Правила роли
      */
+    #[Assert\Valid]
     #[ORM\OneToMany(mappedBy: 'role', targetEntity: ProfileVoter::class, cascade: ['all'])]
     private Collection $voter;
 
@@ -77,6 +78,11 @@ class ProfileRole extends EntityEvent
     {
         $this->id = new ProfileRoleUid();
         $this->event = $event;
+    }
+
+    public function __clone(): void
+    {
+        //$this->id = new ProfileRoleUid();
     }
 
     public function getDto($dto): mixed
@@ -94,7 +100,7 @@ class ProfileRole extends EntityEvent
 
         if($dto instanceof ProfileRoleInterface)
         {
-            if(empty($dto->getPrefix()?->getValue()))
+            if(!$dto->isChecked())
             {
                 return false;
             }

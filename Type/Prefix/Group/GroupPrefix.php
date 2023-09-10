@@ -23,34 +23,56 @@ use function mb_strtoupper;
 
 final class GroupPrefix
 {
-	public const TYPE = 'prefix_group';
-	
-	private $value;
+    public const TYPE = 'prefix_group';
 
-	public function __construct(?string $value = null)
-	{
-		if(empty($value))
-		{
-			throw new InvalidArgumentException('You need to pass a value Group Prefix');
-		}
-		
-		if(!preg_match('/ROLE_(\w{0,20})/', $value))
-		{
-			throw new InvalidArgumentException('Incorrect Group Prefix.');
-		}
-		
-		$this->value = mb_strtoupper($value);
-	}
-	
-	
-	public function __toString() : string
-	{
-		return $this->value;
-	}
-	
-	
-	public function getValue() : string
-	{
-		return $this->value;
-	}
+    private string $value;
+    /**
+     * @var mixed|null
+     */
+    private mixed $attr;
+
+    public function __construct(
+        ?string $value = null,
+        mixed $attr = null,
+    )
+    {
+        if(empty($value))
+        {
+            throw new InvalidArgumentException('You need to pass a value Group Prefix');
+        }
+
+        if(!preg_match('/ROLE_(\w{0,20})/', $value))
+        {
+            throw new InvalidArgumentException('Incorrect Group Prefix.');
+        }
+
+        $this->value = mb_strtoupper($value);
+        $this->attr = $attr;
+    }
+
+
+    public function __toString(): string
+    {
+        return $this->value;
+    }
+
+
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+
+    public function equals(string|self $prefix): bool
+    {
+        return $this->value === (string) $prefix;
+    }
+
+    /**
+     * Attr
+     */
+    public function getAttr(): mixed
+    {
+        return $this->attr;
+    }
+
 }

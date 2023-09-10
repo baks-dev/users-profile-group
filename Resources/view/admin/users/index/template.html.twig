@@ -1,0 +1,15 @@
+{% trans_default_domain('admin.profile.group') %}
+
+
+{% set ROLE = 'ROLE_PROFILE_GROUP_USERS' %}
+
+{# ---- ШАБЛОН ------------------------------------------------------------ #}
+{% extends Template('/admin/base.html.twig') %}
+
+{% block title %}{{ 'admin.page.users'|trans }}{% endblock %}
+
+{# ---- КОНТЕНТ-БЛОК ------------------------------------------------------------ #}
+{% block content %}
+	{{ include(_self|replace({ "template.html.twig": baks_settings.device~"/content.html.twig" })) }}
+{% endblock %}
+

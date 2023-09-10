@@ -24,10 +24,11 @@
 namespace BaksDev\Users\Profile\Group\Command\Upgrade;
 
 use BaksDev\Core\Command\Update\ProjectUpgradeInterface;
+use BaksDev\Users\Profile\Group\Entity\Users\ProfileGroupUsers;
 use BaksDev\Users\Profile\Group\Repository\ExistAdminProfile\ExistAdminProfileInterface;
 use BaksDev\Users\Profile\Group\Type\Prefix\Group\GroupPrefix;
-use BaksDev\Users\Profile\Group\UseCase\Admin\Users\ProfileGroupUsersDTO;
-use BaksDev\Users\Profile\Group\UseCase\Admin\Users\ProfileGroupUsersHandler;
+use BaksDev\Users\Profile\Group\UseCase\Admin\Users\Group\ProfileGroupUsersDTO;
+use BaksDev\Users\Profile\Group\UseCase\Admin\Users\Group\ProfileGroupUsersHandler;
 use BaksDev\Users\Profile\UserProfile\Repository\AdminUserProfile\AdminUserProfileInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
@@ -37,7 +38,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
 #[AsCommand(
-    name: 'baks:project:upgrade:users-profile-group',
+    name: 'baks:users-profile-group:admin',
     description: 'Добавляет в группу "Администратор" профиль администратора ресурса',
 )]
 #[AutoconfigureTag('baks.project.upgrade')]
@@ -52,7 +53,6 @@ class UpgradeUserProfileAdminGroupCommand extends Command implements ProjectUpgr
         ExistAdminProfileInterface $existAdminProfile,
         AdminUserProfileInterface $adminUserProfile,
         ProfileGroupUsersHandler $profileGroupUsersHandler,
-
     )
     {
         parent::__construct();
@@ -64,12 +64,13 @@ class UpgradeUserProfileAdminGroupCommand extends Command implements ProjectUpgr
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        /** Проверяем, была ли добавлена группа профилю */
         $exists = $this->existAdminProfile->isExistsAdminProfile();
 
         if(!$exists)
         {
             $io = new SymfonyStyle($input, $output);
-            $io->text('Обновляем группу профилей администратора');
+            $io->text('Обновляем группу профиля администратора ресурса');
 
             /** Получаем профиль пользователя администратора ресурса */
             $UserProfileUid = $this->adminUserProfile->fetchUserProfile();
@@ -85,7 +86,17 @@ class UpgradeUserProfileAdminGroupCommand extends Command implements ProjectUpgr
                 ->setProfile($UserProfileUid)
                 ->setPrefix(new  GroupPrefix('ROLE_ADMIN'));
 
-            $this->profileGroupUsersHandler->handle($ProfileGroupUsersDTO);
+            $handle = $this->profileGroupUsersHandler->handle($ProfileGroupUsersDTO);
+
+            if(!$handle instanceof ProfileGroupUsers)
+            {
+                $io->success(
+                    sprintf('Ошибка %s при добавлении профиля в группу администратора ресурса', $handle)
+                );
+
+                return Command::FAILURE;
+            }
+
         }
 
         return Command::SUCCESS;
@@ -94,6 +105,6 @@ class UpgradeUserProfileAdminGroupCommand extends Command implements ProjectUpgr
     /** Чам выше число - тем первым в итерации будет значение */
     public static function priority(): int
     {
-        return 0;
+        return 10;
     }
 }

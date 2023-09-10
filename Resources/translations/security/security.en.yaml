@@ -1,0 +1,28 @@
+# Role
+
+ROLE_PROFILE_GROUP:
+  name: 'User groups'
+  desc: 'User groups and their access roles'
+
+# Rules
+
+ROLE_PROFILE_GROUP_NEW:
+  name: 'Add'
+
+ROLE_PROFILE_GROUP_EDIT:
+  name: 'Edit'
+
+ROLE_PROFILE_GROUP_DELETE:
+  name: 'Delete'
+
+
+ROLE_PROFILE_GROUP_USERS:
+  name: 'User credentials'
+  desc: 'Users to whom the trust is issued and role groups'
+
+
+ROLE_PROFILE_GROUP_USERS_ADD:
+  name: 'Add'
+
+ROLE_PROFILE_GROUP_USERS_DELETE:
+  name: 'Delete'

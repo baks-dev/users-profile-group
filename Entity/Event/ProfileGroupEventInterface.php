@@ -28,4 +28,5 @@ use BaksDev\Users\Profile\Group\Type\Event\ProfileGroupEventUid;
 interface ProfileGroupEventInterface
 {
     public function getEvent(): ?ProfileGroupEventUid;
+
 }

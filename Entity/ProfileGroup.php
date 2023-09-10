@@ -54,6 +54,7 @@ class ProfileGroup
      * Идентификатор профиля пользователя
      * кто создал группу
      */
+    #[Assert\NotBlank]
     #[ORM\Column(type: UserProfileUid::TYPE)]
     private UserProfileUid $profile;
 
@@ -66,13 +67,11 @@ class ProfileGroup
     #[ORM\Column(type: ProfileGroupEventUid::TYPE, unique: true)]
     private ProfileGroupEventUid $event;
 
-    public function __construct(?GroupPrefix $group = null)
+    public function __construct(UserProfileUid $profile)
     {
-        if($group === null)
-        {
-            $prefix = uniqid('ROLE_', false);
-            $this->prefix = new GroupPrefix($prefix);
-        }
+        $prefix = uniqid('ROLE_', false);
+        $this->prefix = new GroupPrefix($prefix);
+        $this->profile = $profile;
     }
 
     /**

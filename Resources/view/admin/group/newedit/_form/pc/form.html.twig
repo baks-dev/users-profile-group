@@ -1,0 +1,69 @@
+{% trans_default_domain 'admin.profile.group' %}
+
+
+ {{ include(_self|replace({ "form.html.twig": "_trans.html.twig" })) }}
+
+<div class="d-flex gap-2">
+
+    <div class="d-flex flex-column gap-2 w-100">
+        {# Настройки локали #}
+
+        <div class="card w-100 border-light">
+            <div class="card-header border-light bg-body">
+                <div class="card-title">
+                    <h4>
+                        {# Натсройки процесса #}
+                        Роли группы
+                    </h4>
+                </div>
+            </div>
+
+            <div class="card-body pb-0">
+
+                {% for role in form.role %}
+
+                    <div class="d-flex justify-content-around pb-3 radio-buttons " data-buttons="true">
+                        <label class="btn p-3 pb-0 border-dashed rounded-3 w-100 {{ role.checked.vars.data ? 'active' }}">
+                            <div class="d-flex flex-column text-start mb-3">
+
+                                <div class="d-flex align-items-center gap-3">
+                                    {{ form_widget(role.checked, { label: false }) }}
+                                    <div>
+                                        <span class="h5">
+                                            {{ role.checked.vars.label|trans({}, 'security') }}
+                                        </span>
+                                        <div class="text-muted small">{{ role.checked.vars.help|trans({}, 'security') }}</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if role.voter.count %}
+                                <div id="voter_{{ role.checked.vars.id }}"
+                                     class="d-{{ role.checked.vars.data ? 'block' : 'none' }}">
+                                    <div class="d-flex gap-3">
+                                        {% for voter in  role.voter %}
+                                            {{ form_row(voter.checked) }}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                        </label>
+                    </div>
+
+                {% endfor %}
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+

@@ -44,12 +44,13 @@ class ProfileVoter extends EntityEvent
     #[Assert\NotBlank]
     #[ORM\Id]
     #[ORM\ManyToOne(targetEntity: ProfileRole::class, inversedBy: "voter")]
-    #[ORM\JoinColumn(name: 'event', referencedColumnName: "id")]
+    #[ORM\JoinColumn(name: 'role', referencedColumnName: "id")]
     private ProfileRole $role;
 
     /**
      * Префикс правила
      */
+    #[ORM\Id]
     #[Assert\NotBlank]
     #[ORM\Column(type: RoleVoterPrefix::TYPE)]
     private RoleVoterPrefix $prefix;
@@ -74,7 +75,7 @@ class ProfileVoter extends EntityEvent
 
         if($dto instanceof ProfileVoterInterface)
         {
-            if(empty($dto->getPrefix()?->getValue()))
+            if(!$dto->isChecked())
             {
                 return false;
             }

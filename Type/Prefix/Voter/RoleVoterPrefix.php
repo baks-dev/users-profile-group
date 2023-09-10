@@ -53,4 +53,9 @@ final class RoleVoterPrefix
 	{
 		return $this->value;
 	}
+
+    public function equals(string|self $prefix): bool
+    {
+        return $this->value === (string) $prefix;
+    }
 }

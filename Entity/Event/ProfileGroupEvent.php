@@ -26,9 +26,10 @@ declare(strict_types=1);
 namespace BaksDev\Users\Profile\Group\Entity\Event;
 
 use BaksDev\Core\Entity\EntityEvent;
+use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Users\Profile\Group\Entity\Modify\ProfileGroupModify;
-use BaksDev\Users\Profile\Group\Entity\ProfileGroup;
 use BaksDev\Users\Profile\Group\Entity\Role\ProfileRole;
+use BaksDev\Users\Profile\Group\Entity\Translate\ProfileGroupTranslate;
 use BaksDev\Users\Profile\Group\Type\Event\ProfileGroupEventUid;
 use BaksDev\Users\Profile\Group\Type\Id\ProfileGroupUid;
 use BaksDev\Users\Profile\Group\Type\Prefix\Group\GroupPrefix;
@@ -59,9 +60,8 @@ class ProfileGroupEvent extends EntityEvent
      * Идентификатор ProfileGroup
      */
     #[Assert\NotBlank]
-    #[Assert\Uuid]
     #[ORM\Column(type: GroupPrefix::TYPE, nullable: false)]
-    private ?GroupPrefix $main = null;
+    private ?GroupPrefix $prefix = null;
 
     /**
      * Модификатор
@@ -74,6 +74,13 @@ class ProfileGroupEvent extends EntityEvent
      */
     #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProfileRole::class, cascade: ['all'])]
     private Collection $role;
+
+    /**
+     * Переводы
+     */
+    #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProfileGroupTranslate::class, cascade: ['all'])]
+    private Collection $translate;
+
 
     public function __construct()
     {
@@ -102,18 +109,37 @@ class ProfileGroupEvent extends EntityEvent
     }
 
     /**
-     * Идентификатор ProfileGroup
+     * Prefix
      */
-    public function setMain(ProfileGroupUid|ProfileGroup $main): void
+    public function getPrefix(): ?GroupPrefix
     {
-        $this->main = $main instanceof ProfileGroup ? $main->getId() : $main;
+        return $this->prefix;
     }
 
-
-    public function getMain(): ?ProfileGroupUid
+    public function setPrefix(GroupPrefix $prefix): self
     {
-        return $this->main;
+        $this->prefix = $prefix;
+        return $this;
     }
+
+    /**
+     * Translate
+     */
+    public function getNameByLocale(Locale $locale): ?string
+    {
+        $name = null;
+
+        foreach($this->translate as $trans)
+        {
+            if($name = $trans->name($locale))
+            {
+                break;
+            }
+        }
+
+        return $name;
+    }
+
 
     public function getDto($dto): mixed
     {

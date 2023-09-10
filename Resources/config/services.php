@@ -2,6 +2,8 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+
 return static function(ContainerConfigurator $configurator) {
 
     $services = $configurator->services()
@@ -16,4 +18,8 @@ return static function(ContainerConfigurator $configurator) {
     $services->load($NAMESPACE, $MODULE)
         ->exclude($MODULE.'{Entity,Resources,Type,*DTO.php,*Message.php}');
 
+
+    /** Резолверы */
+
+    $services->set(UserProfileUid::class)->class(UserProfileUid::class);
 };

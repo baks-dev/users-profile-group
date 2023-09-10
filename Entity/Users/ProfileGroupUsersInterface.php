@@ -29,5 +29,5 @@ use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 interface ProfileGroupUsersInterface
 {
     public function getPrefix(): GroupPrefix;
-    public function getProfile(): UserProfileUid;
+    public function getProfile(): ?UserProfileUid;
 }

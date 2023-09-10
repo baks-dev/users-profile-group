@@ -33,15 +33,13 @@ final class ExistAdminProfile implements ExistAdminProfileInterface
 {
     private DBALQueryBuilder $DBALQueryBuilder;
 
-    public function __construct(
-        DBALQueryBuilder $DBALQueryBuilder,
-    )
+    public function __construct(DBALQueryBuilder $DBALQueryBuilder,)
     {
         $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
     /**
-     * Метод проверяет, имеется ли профиль администратора ресурса
+     * Метод проверяет, имеется ли профиль администратора ресурса 'ROLE_ADMIN'
      */
     public function isExistsAdminProfile(): bool
     {

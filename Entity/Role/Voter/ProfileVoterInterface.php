@@ -28,4 +28,6 @@ use BaksDev\Users\Profile\Group\Type\Prefix\Voter\RoleVoterPrefix;
 interface ProfileVoterInterface
 {
     public function getPrefix(): ?RoleVoterPrefix;
+
+    public function isChecked(): bool;
 }
