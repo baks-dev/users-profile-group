@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Users\Profile\Group\UseCase\Admin\Group\NewEdit;
 
 
-use BaksDev\Core\Services\Messenger\MessageDispatchInterface;
+use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\Users\Profile\Group\Entity\Event\ProfileGroupEvent;
 use BaksDev\Users\Profile\Group\Entity\ProfileGroup;
 use BaksDev\Users\Profile\Group\Messenger\ProfileGroupMessage;
@@ -71,9 +71,10 @@ final class ProfileGroupHandler
 
         if(count($errors) > 0)
         {
+            /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $errorsString = (string) $errors;
-            $this->logger->error($uniqid.': '.$errorsString);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+
             return $uniqid;
         }
 
@@ -148,9 +149,10 @@ final class ProfileGroupHandler
 
         if(count($errors) > 0)
         {
+            /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $errorsString = (string) $errors;
-            $this->logger->error($uniqid.': '.$errorsString);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+
             return $uniqid;
         }
 
@@ -165,9 +167,10 @@ final class ProfileGroupHandler
 
         if(count($errors) > 0)
         {
+            /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $errorsString = (string) $errors;
-            $this->logger->error($uniqid.': '.$errorsString);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+
             return $uniqid;
         }
 

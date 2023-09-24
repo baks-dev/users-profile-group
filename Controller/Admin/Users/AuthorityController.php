@@ -26,11 +26,11 @@ declare(strict_types=1);
 namespace BaksDev\Users\Profile\Group\Controller\Admin\Users;
 
 
+use BaksDev\Core\Cache\AppCacheInterface;
 use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Core\Type\UidType\ParamConverter;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
-use Symfony\Component\Cache\Adapter\ApcuAdapter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -45,6 +45,7 @@ final class AuthorityController extends AbstractController
     public function index(
         Request $request,
         RouterInterface $router,
+        AppCacheInterface $cache,
         #[ParamConverter(UserProfileUid::class)] $profile,
     ): Response
     {
@@ -55,11 +56,10 @@ final class AuthorityController extends AbstractController
         }
 
         /** Сохраняем идентификатор профиля */
-        $ApcuAdapter = new ApcuAdapter('Authority');
-        $authority = $ApcuAdapter->getItem((string) $this->getProfileUid());
+        $RedisCache = $cache->init('Authority', 0);
+        $authority = $RedisCache->getItem((string) $this->getProfileUid());
         $authority->set($profile);
-        $authority->expiresAfter(86400);
-        $ApcuAdapter->save($authority);
+        $RedisCache->save($authority);
 
         if($request->headers->get('referer'))
         {

@@ -5,24 +5,41 @@ ROLE_PROFILE_GROUP:
   desc: 'User groups and their access roles'
 
 # Rules
+ROLE_PROFILE_GROUP_INDEX:
+  name: 'View'
+  desc: ''
+
 
 ROLE_PROFILE_GROUP_NEW:
   name: 'Add'
+  desc: ''
 
 ROLE_PROFILE_GROUP_EDIT:
   name: 'Edit'
+  desc: ''
 
 ROLE_PROFILE_GROUP_DELETE:
   name: 'Delete'
+  desc: ''
+
+
+
+
 
 
 ROLE_PROFILE_GROUP_USERS:
   name: 'User credentials'
   desc: 'Users to whom the trust is issued and role groups'
 
+ROLE_PROFILE_GROUP_USERS_INDEX:
+  name: 'View'
+  desc: ''
+
 
 ROLE_PROFILE_GROUP_USERS_ADD:
   name: 'Add'
+  desc: ''
 
 ROLE_PROFILE_GROUP_USERS_DELETE:
   name: 'Delete'
+  desc: ''

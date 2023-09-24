@@ -26,7 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Users\Profile\Group\UseCase\Admin\Users\Group;
 
 
-use BaksDev\Core\Services\Messenger\MessageDispatchInterface;
+use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\Users\Profile\Group\Entity\Users\ProfileGroupUsers;
 use BaksDev\Users\Profile\Group\Messenger\ProfileGroupMessage;
 use Doctrine\ORM\EntityManagerInterface;
@@ -69,9 +69,10 @@ final class ProfileGroupUsersHandler
 
         if(count($errors) > 0)
         {
+            /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $errorsString = (string) $errors;
-            $this->logger->error($uniqid.': '.$errorsString);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+
             return $uniqid;
         }
 
@@ -100,9 +101,10 @@ final class ProfileGroupUsersHandler
 
         if(count($errors) > 0)
         {
+            /** Ошибка валидации */
             $uniqid = uniqid('', false);
-            $errorsString = (string) $errors;
-            $this->logger->error($uniqid.': '.$errorsString);
+            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
+
             return $uniqid;
         }
 

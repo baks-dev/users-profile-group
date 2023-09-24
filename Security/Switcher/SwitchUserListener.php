@@ -25,7 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Users\Profile\Group\Security\Switcher;
 
-use Symfony\Component\Cache\Adapter\ApcuAdapter;
+use BaksDev\Core\Cache\AppCacheInterface;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
@@ -41,10 +41,15 @@ final class SwitchUserListener
     private ?string $redirect = null;
 
     private RouterInterface $router;
+    private AppCacheInterface $cache;
 
-    public function __construct(RouterInterface $router,)
+    public function __construct(
+        RouterInterface $router,
+        AppCacheInterface $cache
+    )
     {
         $this->router = $router;
+        $this->cache = $cache;
     }
 
     public function onSecuritySwitchUser(SwitchUserEvent $event): void
@@ -52,9 +57,9 @@ final class SwitchUserListener
         if($event->getRequest()->get('authority') === '_exit')
         {
             /** Сбрасываем тумблер профиля */
-            $ApcuAdapter = new ApcuAdapter('Authority');
-            $ApcuAdapter->delete($event->getTargetUser()->getUserIdentifier());
-            $ApcuAdapter->delete($event->getToken()?->getUserIdentifier());
+            $RedisCache = $this->cache->init('Authority');
+            $RedisCache->delete($event->getTargetUser()->getUserIdentifier());
+            $RedisCache->delete($event->getToken()?->getUserIdentifier());
         }
 
         $this->redirect = $event->getRequest()->headers->get('referer');

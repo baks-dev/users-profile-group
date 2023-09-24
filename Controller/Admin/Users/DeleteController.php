@@ -56,7 +56,7 @@ final class DeleteController extends AbstractController
 
         $findOneBy['profile'] = $profile;
 
-        if($this->getFilterProfile())
+        if($this->getAdminFilterProfile())
         {
             /* Если пользователь не админ - только собственные группы */
             $findOneBy['authority'] = $this->getProfileUid();
@@ -83,7 +83,7 @@ final class DeleteController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid() && $form->has('profile_group_users_delete'))
         {
-            $ProfileGroupUsers = $ProfileGroupUsersDeleteHandler->handle($ProfileGroupUsersDeleteDTO, !$this->getFilterProfile());
+            $ProfileGroupUsers = $ProfileGroupUsersDeleteHandler->handle($ProfileGroupUsersDeleteDTO, !$this->getAdminFilterProfile());
 
             if($ProfileGroupUsers instanceof ProfileGroupUsers)
             {

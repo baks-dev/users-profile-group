@@ -23,32 +23,29 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Users\Profile\Group\Messenger;
+namespace BaksDev\Users\Profile\Group\Security\Users;
 
-use BaksDev\Core\Cache\AppCacheInterface;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Messenger\Attribute\AsMessageHandler;
+use BaksDev\Users\Profile\Group\Security\RoleInterface;
+use BaksDev\Users\Profile\Group\Security\VoterInterface;
+use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 
-#[AsMessageHandler(fromTransport: 'sync')]
-final class ProfileGroupCacheClear
+#[AutoconfigureTag('baks.security.voter')]
+
+final class VoterIndex implements VoterInterface
 {
-    private AppCacheInterface $cache;
-    private LoggerInterface $messageDispatchLogger;
 
-    public function __construct(
-        AppCacheInterface $cache,
-        LoggerInterface $messageDispatchLogger,
-    ) {
-        $this->cache = $cache;
-        $this->messageDispatchLogger = $messageDispatchLogger;
-    }
+    public const VOTER = 'INDEX';
 
-    public function __invoke(ProfileGroupMessage $message)
+    public static function getVoter(): string
     {
-        /* Чистим кеш модуля */
-        $cache = $this->cache->init('ProfileGroup');
-        $cache->clear();
-
-        $this->messageDispatchLogger->info('Очистили кеш ProfileGroup', [__LINE__ => __FILE__]);
+        return Role::ROLE.'_'.self::VOTER;
     }
+
+    public function equals(RoleInterface $role): bool
+    {
+        return $role->getRole() === Role::ROLE;
+    }
+
+
 }
+

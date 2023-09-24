@@ -40,7 +40,7 @@
                             {% if role.voter.count %}
                                 <div id="voter_{{ role.checked.vars.id }}"
                                      class="d-{{ role.checked.vars.data ? 'block' : 'none' }}">
-                                    <div class="d-flex gap-3">
+                                    <div class="d-flex flex-wrap gap-3">
                                         {% for voter in  role.voter %}
                                             {{ form_row(voter.checked) }}
                                         {% endfor %}

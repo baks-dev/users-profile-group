@@ -25,6 +25,7 @@ declare(strict_types=1);
 
 namespace BaksDev\Users\Profile\Group\Repository\ProfileRoles;
 
+use BaksDev\Core\Cache\RedisCacheInterface;
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Users\Profile\Group\Entity\ProfileGroup;
 use BaksDev\Users\Profile\Group\Entity\Role\ProfileRole;
@@ -32,20 +33,22 @@ use BaksDev\Users\Profile\Group\Entity\Role\Voter\ProfileVoter;
 use BaksDev\Users\Profile\Group\Repository\ExistProfileGroup\ExistProfileGroupInterface;
 use BaksDev\Users\Profile\Group\Type\Prefix\Group\GroupPrefix;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
-use Symfony\Component\Cache\Adapter\ApcuAdapter;
 
 final class ProfileRoles implements ProfileRolesInterface
 {
     private DBALQueryBuilder $DBALQueryBuilder;
     private ExistProfileGroupInterface $existProfileGroup;
+    private RedisCacheInterface $cache;
 
     public function __construct(
         DBALQueryBuilder $DBALQueryBuilder,
         ExistProfileGroupInterface $existProfileGroup,
+        RedisCacheInterface $cache
     )
     {
         $this->DBALQueryBuilder = $DBALQueryBuilder;
         $this->existProfileGroup = $existProfileGroup;
+        $this->cache = $cache;
     }
 
     public function fetchAllRoleUser(UserProfileUid $profile) : ?array
@@ -54,8 +57,8 @@ final class ProfileRoles implements ProfileRolesInterface
         //$authority = $session->get($usr->getProfile(), null);
 
         /** Тумблер профилей пользователя */
-        $ApcuAdapter = new ApcuAdapter('Authority');
-        $authority = $ApcuAdapter->getItem((string) $profile)->get();
+        $RedisCache = $this->cache->initRedisCache('Authority');
+        $authority = $RedisCache->getItem((string) $profile)->get();
 
 
         /** Проверяем, имеется ли у пользователя группа либо доверенность */
@@ -65,7 +68,7 @@ final class ProfileRoles implements ProfileRolesInterface
         {
             /** Получаем префикс группы  */
             $group = $this->profileGroupByUserProfile->findProfileGroupByUserProfile($profile, $authority);
-            //$ApcuAdapter->delete((string) $profile);
+            //$RedisCache->delete((string) $profile);
 
             if($group)
             {
@@ -152,7 +155,7 @@ final class ProfileRoles implements ProfileRolesInterface
                 $roles[] = 'ROLE_ADMINISTRATION';
                 $roles[] = 'ROLE_USER';
 
-                $authority && $ApcuAdapter->delete((string) $profile);
+                $authority && $RedisCache->delete((string) $profile);
             }
 
         }

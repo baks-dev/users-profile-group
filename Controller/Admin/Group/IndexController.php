@@ -59,7 +59,7 @@ final class IndexController extends AbstractController
         // $filterForm->handleRequest($request);
 
         // Получаем список
-        $ProfileGroup = $allProfileGroup->fetchAllProfileGroupAssociative($search, $this->getFilterProfile());
+        $ProfileGroup = $allProfileGroup->fetchAllProfileGroupAssociative($search, $this->getAdminFilterProfile());
 
         return $this->render(
             [

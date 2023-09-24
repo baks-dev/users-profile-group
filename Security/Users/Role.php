@@ -35,13 +35,14 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 #[AutoconfigureTag('baks.menu.admin')]
 final class Role implements RoleInterface, MenuAdminInterface
 {
-    /** Табели сотрудников */
+    /** Доверенности */
     public const ROLE = 'ROLE_PROFILE_GROUP_USERS';
 
     public function getRole(): string
     {
         return self::ROLE;
     }
+
 
     /**
      * Добавляем раздел в меню администрирования.
@@ -84,5 +85,6 @@ final class Role implements RoleInterface, MenuAdminInterface
     {
         return false;
     }
+
 }
 

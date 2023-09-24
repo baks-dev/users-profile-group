@@ -25,13 +25,13 @@ declare(strict_types=1);
 
 namespace BaksDev\Users\Profile\Group\Security\Switcher;
 
+use BaksDev\Core\Cache\AppCacheInterface;
 use BaksDev\Users\Profile\UserProfile\Repository\CurrentUserProfile\CurrentUserProfileInterface;
 use BaksDev\Users\Profile\UserProfile\Repository\UserByUserProfile\UserByUserProfileInterface;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use BaksDev\Users\User\Entity\User;
 use BaksDev\Users\User\Repository\GetUserById\GetUserByIdInterface;
 use InvalidArgumentException;
-use Symfony\Component\Cache\Adapter\ApcuAdapter;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\SwitchUserToken;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -45,8 +45,10 @@ final class SwitchUserProvider implements UserProviderInterface
     private TokenStorageInterface $tokenStorage;
     private CurrentUserProfileInterface $currentUserProfile;
     private UserByUserProfileInterface $userByUserProfile;
+    private AppCacheInterface $cache;
 
     public function __construct(
+        AppCacheInterface $cache,
         TokenStorageInterface $tokenStorage,
         GetUserByIdInterface $getUserById,
         CurrentUserProfileInterface $currentUserProfile,
@@ -58,6 +60,7 @@ final class SwitchUserProvider implements UserProviderInterface
         $this->tokenStorage = $tokenStorage;
         $this->currentUserProfile = $currentUserProfile;
         $this->userByUserProfile = $userByUserProfile;
+        $this->cache = $cache;
     }
 
     public function refreshUser(UserInterface $user)
@@ -88,7 +91,8 @@ final class SwitchUserProvider implements UserProviderInterface
         $token = $this->tokenStorage->getToken();
         $current = $token instanceof SwitchUserToken ? $token->getOriginalToken()->getUser() : $token?->getUser();
 
-        //dump($current);
+        // 0189cc73-c70d-7a82-803a-544416397705 - АДМИН
+        //dd($current);
 
         if(!$current)
         {
@@ -121,11 +125,10 @@ final class SwitchUserProvider implements UserProviderInterface
             if($ADMIN)
             {
                 /** Тумблер профилей авторизации пользователя */
-                $ApcuAdapter = new ApcuAdapter('Authority');
-                $save = $ApcuAdapter->getItem($user->getUserIdentifier());
+                $RedisCache = $this->cache->init('Authority', 0);
+                $save = $RedisCache->getItem($user->getUserIdentifier());
                 $save->set($authority);
-                $save->expiresAfter(86400);
-                $ApcuAdapter->save($save);
+                $RedisCache->save($save);
             }
 
             $roles = $this->getUserById->fetchAllRoleUser($authority);
@@ -140,14 +143,11 @@ final class SwitchUserProvider implements UserProviderInterface
         $user->setRole($roles);
         $user->setProfile($authority);
 
-        //dump($user);
-
         /** Тумблер профилей активного пользователя */
-        $ApcuAdapter = new ApcuAdapter('Authority');
-        $save = $ApcuAdapter->getItem($current->getUserIdentifier());
+        $RedisCache = $this->cache->init('Authority', 0);
+        $save = $RedisCache->getItem($current->getUserIdentifier());
         $save->set($authority);
-        $save->expiresAfter(86400);
-        $ApcuAdapter->save($save);
+        $RedisCache->save($save);
 
 
         return $user;
