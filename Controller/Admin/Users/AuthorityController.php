@@ -31,6 +31,7 @@ use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Core\Type\UidType\ParamConverter;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use DateInterval;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -56,10 +57,11 @@ final class AuthorityController extends AbstractController
         }
 
         /** Сохраняем идентификатор профиля */
-        $RedisCache = $cache->init('Authority', 0);
-        $authority = $RedisCache->getItem((string) $this->getProfileUid());
+        $AppCache = $cache->init('Authority', 0);
+        $authority = $AppCache->getItem((string) $this->getProfileUid());
         $authority->set($profile);
-        $RedisCache->save($authority);
+        $authority->expiresAfter(DateInterval::createFromDateString('1 weeks'));
+        $AppCache->save($authority);
 
         if($request->headers->get('referer'))
         {

@@ -31,6 +31,7 @@ use BaksDev\Users\Profile\UserProfile\Repository\UserByUserProfile\UserByUserPro
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use BaksDev\Users\User\Entity\User;
 use BaksDev\Users\User\Repository\GetUserById\GetUserByIdInterface;
+use DateInterval;
 use InvalidArgumentException;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\SwitchUserToken;
@@ -125,10 +126,11 @@ final class SwitchUserProvider implements UserProviderInterface
             if($ADMIN)
             {
                 /** Тумблер профилей авторизации пользователя */
-                $RedisCache = $this->cache->init('Authority', 0);
-                $save = $RedisCache->getItem($user->getUserIdentifier());
+                $AppCache = $this->cache->init('Authority', 0);
+                $save = $AppCache->getItem($user->getUserIdentifier());
                 $save->set($authority);
-                $RedisCache->save($save);
+                $save->expiresAfter(DateInterval::createFromDateString('1 weeks'));
+                $AppCache->save($save);
             }
 
             $roles = $this->getUserById->fetchAllRoleUser($authority);
@@ -144,10 +146,11 @@ final class SwitchUserProvider implements UserProviderInterface
         $user->setProfile($authority);
 
         /** Тумблер профилей активного пользователя */
-        $RedisCache = $this->cache->init('Authority', 0);
-        $save = $RedisCache->getItem($current->getUserIdentifier());
+        $AppCache = $this->cache->init('Authority', 0);
+        $save = $AppCache->getItem($current->getUserIdentifier());
         $save->set($authority);
-        $RedisCache->save($save);
+        $save->expiresAfter(DateInterval::createFromDateString('1 weeks'));
+        $AppCache->save($save);
 
 
         return $user;

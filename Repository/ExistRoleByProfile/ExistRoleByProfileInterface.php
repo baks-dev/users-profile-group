@@ -21,11 +21,14 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Users\Profile\Group\Repository\ProfileRoles;
+namespace BaksDev\Users\Profile\Group\Repository\ExistRoleByProfile;
 
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
-interface ProfileRolesInterface
+interface ExistRoleByProfileInterface
 {
-    public function fetchAllRoleUser(UserProfileUid $profile): ?array;
+    /**
+     * Метод проверяет, имеется ли у профиля хотя бы у одной группы роль
+     */
+    public function isExistRole(UserProfileUid $profile, string $voter): bool;
 }

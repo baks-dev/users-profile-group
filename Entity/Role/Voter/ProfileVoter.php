@@ -36,6 +36,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'profile_group_voter')]
+#[ORM\Index(columns: ['prefix'])]
 class ProfileVoter extends EntityEvent
 {
     public const TABLE = 'profile_group_voter';

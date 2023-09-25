@@ -57,9 +57,9 @@ final class SwitchUserListener
         if($event->getRequest()->get('authority') === '_exit')
         {
             /** Сбрасываем тумблер профиля */
-            $RedisCache = $this->cache->init('Authority');
-            $RedisCache->delete($event->getTargetUser()->getUserIdentifier());
-            $RedisCache->delete($event->getToken()?->getUserIdentifier());
+            $AppCache = $this->cache->init('Authority');
+            $AppCache->delete($event->getTargetUser()->getUserIdentifier());
+            $AppCache->delete($event->getToken()?->getUserIdentifier());
         }
 
         $this->redirect = $event->getRequest()->headers->get('referer');
