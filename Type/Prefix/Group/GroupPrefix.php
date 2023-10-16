@@ -18,12 +18,15 @@
 
 namespace BaksDev\Users\Profile\Group\Type\Prefix\Group;
 
+use App\Kernel;
 use InvalidArgumentException;
 use function mb_strtoupper;
 
 final class GroupPrefix
 {
     public const TYPE = 'prefix_group';
+
+    public const TEST = 'ROLE_GROUP_TEST';
 
     private string $value;
     /**
@@ -36,6 +39,12 @@ final class GroupPrefix
         mixed $attr = null,
     )
     {
+        if (Kernel::isTestEnvironment())
+        {
+            $this->value = mb_strtoupper(self::TEST);
+            return;
+        }
+
         if(empty($value))
         {
             throw new InvalidArgumentException('You need to pass a value Group Prefix');

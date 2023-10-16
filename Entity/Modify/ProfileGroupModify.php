@@ -98,10 +98,16 @@ class ProfileGroupModify extends EntityEvent
         $this->agent = 'console';
     }
 
+    public function __toString(): string
+    {
+        return (string) $this->event;
+    }
 
     public function getDto($dto): mixed
     {
-        if($dto instanceof ProfileGroupModifyInterface)
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
+        if($dto instanceof ProfileGroupModifyInterface || $dto instanceof self)
         {
             return parent::getDto($dto);
         }
@@ -111,7 +117,7 @@ class ProfileGroupModify extends EntityEvent
 
     public function setEntity($dto): mixed
     {
-        if($dto instanceof ProfileGroupModifyInterface)
+        if($dto instanceof ProfileGroupModifyInterface || $dto instanceof self)
         {
             return parent::setEntity($dto);
         }

@@ -61,9 +61,16 @@ class ProfileVoter extends EntityEvent
         $this->role = $role;
     }
 
+    public function __toString(): string
+    {
+        return (string) $this->role;
+    }
+
     public function getDto($dto): mixed
     {
-        if($dto instanceof ProfileVoterInterface)
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
+        if($dto instanceof ProfileVoterInterface || $dto instanceof self)
         {
             return parent::getDto($dto);
         }
@@ -73,8 +80,7 @@ class ProfileVoter extends EntityEvent
 
     public function setEntity($dto): mixed
     {
-
-        if($dto instanceof ProfileVoterInterface)
+        if($dto instanceof ProfileVoterInterface || $dto instanceof self)
         {
             if(!$dto->isChecked())
             {

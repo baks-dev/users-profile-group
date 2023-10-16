@@ -23,58 +23,42 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Users\Profile\Group\UseCase\Admin\Group\NewEdit\Trans;
+namespace BaksDev\Users\Profile\Group\Repository\ProfileGroupCurrentEvent;
 
-use BaksDev\Core\Type\Locale\Locale;
-use BaksDev\Users\Profile\Group\Entity\Translate\ProfileGroupTranslateInterface;
-use ReflectionProperty;
-use Symfony\Component\Validator\Constraints as Assert;
+use BaksDev\Core\Doctrine\ORMQueryBuilder;
+use BaksDev\Users\Profile\Group\Entity\Event\ProfileGroupEvent;
+use BaksDev\Users\Profile\Group\Entity\ProfileGroup;
+use BaksDev\Users\Profile\Group\Type\Prefix\Group\GroupPrefix;
 
-/** @see ProfileGroupTranslate */
-final class ProfileGroupTranslateDTO implements ProfileGroupTranslateInterface
+final class ProfileGroupCurrentEvent implements ProfileGroupCurrentEventInterface
 {
+    private ORMQueryBuilder $ORMQueryBuilder;
+
+    public function __construct(ORMQueryBuilder $ORMQueryBuilder)
+    {
+        $this->ORMQueryBuilder = $ORMQueryBuilder;
+    }
 
     /**
-     * Локаль
+     * Получает активное событие группы
      */
-    #[Assert\NotBlank]
-    private readonly Locale $local;
-
-    /**
-     * Название группы
-     */
-    #[Assert\NotBlank]
-    #[Assert\Regex(pattern: '/^[\w \.\,\_\-\(\)\%]+$/iu')]
-    private ?string $name;
-
-
-
-    public function getLocal() : Locale
+    public function findProfileGroupEvent(GroupPrefix $prefix): ?ProfileGroupEvent
     {
-        return $this->local;
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
+
+        $qb->select('event');
+        $qb
+            ->from(ProfileGroup::class, 'profile_group')
+            ->where('profile_group.prefix = :prefix')
+            ->setParameter('prefix', $prefix, GroupPrefix::TYPE);
+
+        $qb->join(
+            ProfileGroupEvent::class,
+            'event',
+            'WITH',
+            'event.id = profile_group.event'
+        );
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
-
-
-    public function setLocal(string|Locale $local) : void
-    {
-        if(!(new ReflectionProperty(self::class, 'local'))->isInitialized($this))
-        {
-            $this->local = $local instanceof  Locale ? $local : new Locale($local);
-        }
-    }
-
-
-    /**
-     * Название группы
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(?string $name) : void
-    {
-        $this->name = $name;
-    }
-
 }

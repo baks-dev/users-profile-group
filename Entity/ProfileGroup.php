@@ -74,6 +74,11 @@ class ProfileGroup
         $this->profile = $profile;
     }
 
+    public function __toString(): string
+    {
+        return (string) $this->prefix;
+    }
+
     /**
      * Идентификатор
      */

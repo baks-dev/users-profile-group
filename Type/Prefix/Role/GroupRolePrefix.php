@@ -23,16 +23,25 @@
 
 namespace BaksDev\Users\Profile\Group\Type\Prefix\Role;
 
+use App\Kernel;
 use InvalidArgumentException;
 
 final class GroupRolePrefix
 {
 	public const TYPE = 'prefix_role';
-	
+
+	public const TEST = 'ROLE_PREFIX_TEST';
+
 	private $value;
 
     public function __construct(?string $value = null)
 	{
+        if (Kernel::isTestEnvironment())
+        {
+            $this->value = mb_strtoupper(self::TEST);
+            return;
+        }
+
 		if(empty($value))
 		{
 			throw new InvalidArgumentException('You need to pass a value Role Prefix');
@@ -47,13 +56,13 @@ final class GroupRolePrefix
     }
 	
 	
-	public function __toString() : string
+	public function __toString(): string
 	{
 		return $this->value;
 	}
 	
 	
-	public function getValue() : string
+	public function getValue(): string
 	{
 		return $this->value;
 	}

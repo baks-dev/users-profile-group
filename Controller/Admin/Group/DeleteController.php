@@ -50,10 +50,11 @@ final class DeleteController extends AbstractController
         ProfileGroupDeleteHandler $ProfileGroupDeleteHandler,
     ): Response
     {
-        $ProfileGroupDeleteDTO = new ProfileGroupDeleteDTO();
+        $ProfileGroupDeleteDTO = new ProfileGroupDeleteDTO($this->getProfileUid());
         $ProfileGroupEvent->getDto($ProfileGroupDeleteDTO);
+
         $form = $this->createForm(ProfileGroupDeleteForm::class, $ProfileGroupDeleteDTO, [
-            'action' => $this->generateUrl('ProfileGroup:admin.delete',
+            'action' => $this->generateUrl('ProfileGroup:admin.group.delete',
                 ['id' => $ProfileGroupDeleteDTO->getEvent()]),
         ]);
         $form->handleRequest($request);

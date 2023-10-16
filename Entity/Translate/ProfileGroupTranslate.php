@@ -73,9 +73,16 @@ class ProfileGroupTranslate extends EntityEvent
         $this->event = $event;
     }
 
+    public function __toString(): string
+    {
+        return (string) $this->event;
+    }
+
     public function getDto($dto): mixed
     {
-        if($dto instanceof ProfileGroupTranslateInterface)
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
+        if($dto instanceof ProfileGroupTranslateInterface || $dto instanceof self)
         {
             return parent::getDto($dto);
         }
@@ -86,7 +93,7 @@ class ProfileGroupTranslate extends EntityEvent
     public function setEntity($dto): mixed
     {
 
-        if($dto instanceof ProfileGroupTranslateInterface)
+        if($dto instanceof ProfileGroupTranslateInterface || $dto instanceof self)
         {
             return parent::setEntity($dto);
         }

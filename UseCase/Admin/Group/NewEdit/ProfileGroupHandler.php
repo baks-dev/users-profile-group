@@ -25,164 +25,48 @@ declare(strict_types=1);
 
 namespace BaksDev\Users\Profile\Group\UseCase\Admin\Group\NewEdit;
 
-
-use BaksDev\Core\Messenger\MessageDispatchInterface;
+use BaksDev\Core\Entity\AbstractHandler;
 use BaksDev\Users\Profile\Group\Entity\Event\ProfileGroupEvent;
 use BaksDev\Users\Profile\Group\Entity\ProfileGroup;
 use BaksDev\Users\Profile\Group\Messenger\ProfileGroupMessage;
-use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
+use DomainException;
 
-final class ProfileGroupHandler
+final class ProfileGroupHandler extends AbstractHandler
 {
-    private EntityManagerInterface $entityManager;
-
-    private ValidatorInterface $validator;
-
-    private LoggerInterface $logger;
-
-    private MessageDispatchInterface $messageDispatch;
-
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        ValidatorInterface $validator,
-        LoggerInterface $logger,
-        MessageDispatchInterface $messageDispatch
-    )
-    {
-        $this->entityManager = $entityManager;
-        $this->validator = $validator;
-        $this->logger = $logger;
-        $this->messageDispatch = $messageDispatch;
-
-    }
-
     /** @see ProfileGroup */
-    public function handle(
-        ProfileGroupDTO $command,
-    ): string|ProfileGroup
+    public function handle(ProfileGroupDTO $command): string|ProfileGroup
     {
 
-        /**
-         *  Валидация ProfileGroupDTO
-         */
-        $errors = $this->validator->validate($command);
+        /** Валидация WbSupplyNewDTO  */
+        $this->validatorCollection->add($command);
 
-        if(count($errors) > 0)
+        $this->main = new ProfileGroup($command->getProfile());
+        $this->event = new ProfileGroupEvent();
+
+        try
         {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
-
-            return $uniqid;
+            $command->getEvent() ? $this->preUpdate($command) : $this->prePersist($command);
+        }
+        catch(DomainException $errorUniqid)
+        {
+            return $errorUniqid;
         }
 
-
-        if($command->getEvent())
+        /** Валидация всех объектов */
+        if($this->validatorCollection->isInvalid())
         {
-            $EventRepo = $this->entityManager->getRepository(ProfileGroupEvent::class)->find(
-                $command->getEvent()
-            );
-
-            if($EventRepo === null)
-            {
-                $uniqid = uniqid('', false);
-                $errorsString = sprintf(
-                    'Not found %s by id: %s',
-                    ProfileGroupEvent::class,
-                    $command->getEvent()
-                );
-                $this->logger->error($uniqid.': '.$errorsString);
-
-                return $uniqid;
-            }
-
-            $Event = $EventRepo->cloneEntity();
-
-        }
-        else
-        {
-            $Event = new ProfileGroupEvent();
-            $this->entityManager->persist($Event);
+            return $this->validatorCollection->getErrorUniqid();
         }
 
-
-        $this->entityManager->clear();
-
-        /** @var ProfileGroup $ProfileGroup */
-        if($Event->getPrefix())
-        {
-            $ProfileGroup = $this->entityManager->getRepository(ProfileGroup::class)->findOneBy(
-                ['event' => $command->getEvent()]
-            );
-
-            if(empty($ProfileGroup))
-            {
-                $uniqid = uniqid('', false);
-                $errorsString = sprintf(
-                    'Not found %s by event: %s',
-                    ProfileGroup::class,
-                    $command->getEvent()
-                );
-                $this->logger->error($uniqid.': '.$errorsString);
-
-                return $uniqid;
-            }
-
-        }
-        else
-        {
-            $ProfileGroup = new ProfileGroup($command->getProfile());
-            $this->entityManager->persist($ProfileGroup);
-            $Event->setPrefix($ProfileGroup->getPrefix());
-        }
-
-        $Event->setEntity($command);
-        $this->entityManager->persist($Event);
-
-
-        /**
-         * Валидация Event
-         */
-        $errors = $this->validator->validate($Event);
-
-        if(count($errors) > 0)
-        {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
-
-            return $uniqid;
-        }
-
-
-        /* присваиваем событие корню */
-        $ProfileGroup->setEvent($Event);
-
-        /**
-         * Валидация Main
-         */
-        $errors = $this->validator->validate($ProfileGroup);
-
-        if(count($errors) > 0)
-        {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
-
-            return $uniqid;
-        }
 
         $this->entityManager->flush();
 
         /* Отправляем сообщение в шину */
         $this->messageDispatch->dispatch(
-            message: new ProfileGroupMessage($ProfileGroup->getPrefix()),
+            message: new ProfileGroupMessage($this->main->getPrefix()),
             transport: 'users-profile-group'
         );
 
-        // 'profile-group_high'
-        return $ProfileGroup;
+        return $this->main;
     }
 }

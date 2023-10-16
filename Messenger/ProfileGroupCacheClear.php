@@ -26,21 +26,25 @@ declare(strict_types=1);
 namespace BaksDev\Users\Profile\Group\Messenger;
 
 use BaksDev\Core\Cache\AppCacheInterface;
+use BaksDev\Users\Profile\Group\Repository\ProfileGroupCurrentEvent\ProfileGroupCurrentEventInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
-#[AsMessageHandler(fromTransport: 'sync')]
+#[AsMessageHandler]
 final class ProfileGroupCacheClear
 {
     private AppCacheInterface $cache;
     private LoggerInterface $messageDispatchLogger;
+    private ProfileGroupCurrentEventInterface $profileGroupCurrentEvent;
 
     public function __construct(
         AppCacheInterface $cache,
         LoggerInterface $messageDispatchLogger,
+        ProfileGroupCurrentEventInterface $profileGroupCurrentEvent
     ) {
         $this->cache = $cache;
         $this->messageDispatchLogger = $messageDispatchLogger;
+        $this->profileGroupCurrentEvent = $profileGroupCurrentEvent;
     }
 
     public function __invoke(ProfileGroupMessage $message)
@@ -49,6 +53,6 @@ final class ProfileGroupCacheClear
         $cache = $this->cache->init('ProfileGroup');
         $cache->clear();
 
-        $this->messageDispatchLogger->info('Очистили кеш ProfileGroup', [__LINE__ => __FILE__]);
+        $this->messageDispatchLogger->info('Очистили кеш ProfileGroup', [__FILE__.':'.__LINE__]);
     }
 }

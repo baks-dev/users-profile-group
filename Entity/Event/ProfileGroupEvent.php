@@ -28,6 +28,7 @@ namespace BaksDev\Users\Profile\Group\Entity\Event;
 use BaksDev\Core\Entity\EntityEvent;
 use BaksDev\Core\Type\Locale\Locale;
 use BaksDev\Users\Profile\Group\Entity\Modify\ProfileGroupModify;
+use BaksDev\Users\Profile\Group\Entity\ProfileGroup;
 use BaksDev\Users\Profile\Group\Entity\Role\ProfileRole;
 use BaksDev\Users\Profile\Group\Entity\Translate\ProfileGroupTranslate;
 use BaksDev\Users\Profile\Group\Type\Event\ProfileGroupEventUid;
@@ -95,12 +96,12 @@ class ProfileGroupEvent extends EntityEvent
 
     public function __clone()
     {
-        $this->id = new ProfileGroupEventUid();
+        $this->id = clone $this->id;
     }
 
     public function __toString(): string
     {
-        return (string) $this->id->getValue();
+        return (string) $this->id;
     }
 
     public function getId(): ProfileGroupEventUid
@@ -116,11 +117,16 @@ class ProfileGroupEvent extends EntityEvent
         return $this->prefix;
     }
 
-    public function setPrefix(GroupPrefix $prefix): self
+    public function setMain(ProfileGroup|GroupPrefix $prefix): void
     {
-        $this->prefix = $prefix;
-        return $this;
+        $this->prefix = $prefix instanceof ProfileGroup ? $prefix->getPrefix() : $prefix;
     }
+
+//    public function setPrefix(GroupPrefix $prefix): self
+//    {
+//        $this->prefix = $prefix;
+//        return $this;
+//    }
 
     /**
      * Translate
@@ -143,7 +149,9 @@ class ProfileGroupEvent extends EntityEvent
 
     public function getDto($dto): mixed
     {
-        if($dto instanceof ProfileGroupEventInterface)
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
+        if($dto instanceof ProfileGroupEventInterface || $dto instanceof self)
         {
             return parent::getDto($dto);
         }
@@ -153,7 +161,7 @@ class ProfileGroupEvent extends EntityEvent
 
     public function setEntity($dto): mixed
     {
-        if($dto instanceof ProfileGroupEventInterface)
+        if($dto instanceof ProfileGroupEventInterface || $dto instanceof self)
         {
             return parent::setEntity($dto);
         }

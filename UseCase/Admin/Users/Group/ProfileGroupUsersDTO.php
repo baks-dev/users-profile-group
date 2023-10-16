@@ -73,7 +73,7 @@ final class ProfileGroupUsersDTO implements ProfileGroupUsersInterface
     public function getProfile(): ?UserProfileUid
     {
 
-        if (!(new ReflectionProperty($this::class, 'profile'))->isInitialized($this)) {
+        if (!(new ReflectionProperty(self::class, 'profile'))->isInitialized($this)) {
            return null;
         }
 
@@ -82,7 +82,7 @@ final class ProfileGroupUsersDTO implements ProfileGroupUsersInterface
 
     public function setProfile(UserProfileUid $profile): self
     {
-        if (!(new ReflectionProperty($this::class, 'profile'))->isInitialized($this)) {
+        if (!(new ReflectionProperty(self::class, 'profile'))->isInitialized($this)) {
             $this->profile = $profile;
         }
 

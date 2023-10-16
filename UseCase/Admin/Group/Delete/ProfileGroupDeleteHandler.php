@@ -26,126 +26,55 @@ declare(strict_types=1);
 namespace BaksDev\Users\Profile\Group\UseCase\Admin\Group\Delete;
 
 
+use BaksDev\Core\Entity\AbstractHandler;
 use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\Users\Profile\Group\Entity\Event\ProfileGroupEvent;
 use BaksDev\Users\Profile\Group\Entity\ProfileGroup;
 use BaksDev\Users\Profile\Group\Messenger\ProfileGroupMessage;
 use Doctrine\ORM\EntityManagerInterface;
+use DomainException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final class ProfileGroupDeleteHandler
+final class ProfileGroupDeleteHandler extends AbstractHandler
 {
-    private EntityManagerInterface $entityManager;
-
-    private ValidatorInterface $validator;
-
-    private LoggerInterface $logger;
-    private MessageDispatchInterface $messageDispatch;
 
 
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        ValidatorInterface $validator,
-        LoggerInterface $logger,
-        MessageDispatchInterface $messageDispatch,
-    )
-    {
-        $this->entityManager = $entityManager;
-        $this->validator = $validator;
-        $this->logger = $logger;
-        $this->messageDispatch = $messageDispatch;
-    }
-
-
-    public function handle(
-        ProfileGroupDeleteDTO $command,
-    ): string|ProfileGroup
+    public function handle(ProfileGroupDeleteDTO $command): string|ProfileGroup
     {
 
-        /* Валидация PaymentDeleteDTO */
-        $errors = $this->validator->validate($command);
 
-        if(count($errors) > 0)
+        /** Валидация WbSupplyNewDTO  */
+        $this->validatorCollection->add($command);
+
+        $this->main = new ProfileGroup($command->getProfile());
+        $this->event = new ProfileGroupEvent();
+
+
+        try
         {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [__LINE__ => __FILE__]);
-
-            return $uniqid;
+            $this->preRemove($command);
+        }
+        catch(DomainException $errorUniqid)
+        {
+            return $errorUniqid;
         }
 
-        /* Обязательно передается идентификатор события */
-        if($command->getEvent() === null)
+        /** Валидация всех объектов */
+        if($this->validatorCollection->isInvalid())
         {
-            $uniqid = uniqid('', false);
-            $errorsString = sprintf(
-                'Not found event id in class: %s',
-                $command::class
-            );
-            $this->logger->error($uniqid.': '.$errorsString);
-
-            return $uniqid;
+            return $this->validatorCollection->getErrorUniqid();
         }
-
-
-        /**
-         * Получаем событие
-         */
-        $Event = $this->entityManager->getRepository(ProfileGroupEvent::class)
-            ->find($command->getEvent());
-
-        if($Event === null)
-        {
-            $uniqid = uniqid('', false);
-            $errorsString = sprintf(
-                'Not found %s by id: %s',
-                ProfileGroupEvent::class,
-                $command->getEvent()
-            );
-            $this->logger->error($uniqid.': '.$errorsString);
-
-            return $uniqid;
-        }
-
-
-        /**
-         * Получаем корень агрегата
-         */
-        $Main = $this->entityManager->getRepository(ProfileGroup::class)
-            ->findOneBy(['event' => $command->getEvent()]);
-
-        if(empty($Main))
-        {
-            $uniqid = uniqid('', false);
-            $errorsString = sprintf(
-                'Not found %s by event: %s',
-                ProfileGroup::class,
-                $command->getEvent()
-            );
-            $this->logger->error($uniqid.': '.$errorsString);
-
-            return $uniqid;
-        }
-
-
-        /* Применяем изменения к событию */
-        $Event->setEntity($command);
-        $this->entityManager->persist($Event);
-
-        /* Удаляем корень агрегата */
-        $this->entityManager->remove($Main);
 
         $this->entityManager->flush();
 
-
         /* Отправляем сообщение в шину */
         $this->messageDispatch->dispatch(
-            message: new ProfileGroupMessage($Main->getPrefix()),
+            message: new ProfileGroupMessage($this->main->getPrefix()),
             transport: 'users-profile-group'
         );
 
-        return $Main;
+        return $this->main;
 
     }
 

@@ -63,6 +63,12 @@ class ProfileGroupUsers extends EntityState
     #[ORM\Column(type: UserProfileUid::TYPE, nullable: true)]
     private ?UserProfileUid $authority = null;
 
+
+    public function __toString(): string
+    {
+        return (string) $this->prefix;
+    }
+
     /**
      * Prefix
      */
@@ -73,7 +79,9 @@ class ProfileGroupUsers extends EntityState
 
     public function getDto($dto): mixed
     {
-        if($dto instanceof ProfileGroupUsersInterface)
+        $dto = is_string($dto) && class_exists($dto) ? new $dto() : $dto;
+
+        if($dto instanceof ProfileGroupUsersInterface || $dto instanceof self)
         {
             return parent::getDto($dto);
         }
@@ -84,7 +92,7 @@ class ProfileGroupUsers extends EntityState
     public function setEntity($dto): mixed
     {
 
-        if($dto instanceof ProfileGroupUsersInterface)
+        if($dto instanceof ProfileGroupUsersInterface || $dto instanceof self)
         {
             return parent::setEntity($dto);
         }

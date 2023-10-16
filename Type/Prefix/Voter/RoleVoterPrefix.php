@@ -18,18 +18,27 @@
 
 namespace BaksDev\Users\Profile\Group\Type\Prefix\Voter;
 
+use App\Kernel;
 use InvalidArgumentException;
 use function mb_strtoupper;
 
 final class RoleVoterPrefix
 {
 	public const TYPE = 'prefix_voter';
-	
+
+	public const TEST = 'ROLE_VOTER_TEST';
+
 	private $value;
 
 	public function __construct(?string $value = null)
 	{
-		if(empty($value))
+        if (Kernel::isTestEnvironment())
+        {
+            $this->value = mb_strtoupper(self::TEST);
+            return;
+        }
+
+        if(empty($value))
 		{
 			throw new InvalidArgumentException('You need to pass a value Voter Prefix');
 		}
@@ -43,13 +52,13 @@ final class RoleVoterPrefix
 	}
 	
 	
-	public function __toString() : string
+	public function __toString(): string
 	{
 		return $this->value;
 	}
 	
 	
-	public function getValue() : string
+	public function getValue(): string
 	{
 		return $this->value;
 	}

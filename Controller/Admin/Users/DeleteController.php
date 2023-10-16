@@ -30,6 +30,7 @@ use BaksDev\Core\Controller\AbstractController;
 use BaksDev\Core\Listeners\Event\Security\RoleSecurity;
 use BaksDev\Core\Type\UidType\ParamConverter;
 use BaksDev\Users\Profile\Group\Entity\Users\ProfileGroupUsers;
+use BaksDev\Users\Profile\Group\Repository\ProfileGroupCurrentEvent\ProfileGroupCurrentEventInterface;
 use BaksDev\Users\Profile\Group\UseCase\Admin\Users\Delete\ProfileGroupUsersDeleteDTO;
 use BaksDev\Users\Profile\Group\UseCase\Admin\Users\Delete\ProfileGroupUsersDeleteForm;
 use BaksDev\Users\Profile\Group\UseCase\Admin\Users\Delete\ProfileGroupUsersDeleteHandler;

@@ -21,54 +21,15 @@
  *  THE SOFTWARE.
  */
 
-declare(strict_types=1);
+namespace BaksDev\Users\Profile\Group\Repository\ProfileGroupCurrentEvent;
 
-namespace BaksDev\Users\Profile\Group\UseCase\Admin\Group\Delete;
+use BaksDev\Users\Profile\Group\Entity\Event\ProfileGroupEvent;
+use BaksDev\Users\Profile\Group\Type\Prefix\Group\GroupPrefix;
 
-
-use BaksDev\Users\Profile\Group\Entity\Event\ProfileGroupEventInterface;
-use BaksDev\Users\Profile\Group\Type\Event\ProfileGroupEventUid;
-use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
-use Symfony\Component\Validator\Constraints as Assert;
-
-final class ProfileGroupDeleteDTO implements ProfileGroupEventInterface
+interface ProfileGroupCurrentEventInterface
 {
-	/**
-     * Идентификатор события
+    /**
+     * Получает активное событие группы
      */
-	#[Assert\Uuid]
-	#[Assert\NotBlank]
-	private ?ProfileGroupEventUid $id = null;
-
-    #[Assert\Uuid]
-    #[Assert\NotBlank]
-    private readonly UserProfileUid $profile;
-	
-	#[Assert\Valid]
-	private Modify\ModifyDTO $modify;
-
-	public function __construct(UserProfileUid $profile)
-    {
-		$this->modify = new Modify\ModifyDTO();
-        $this->profile = $profile;
-    }
-
-	
-	public function getEvent() : ?ProfileGroupEventUid
-	{
-		return $this->id;
-	}
-	
-	
-	public function getModify() : Modify\ModifyDTO
-	{
-		return $this->modify;
-	}
-
-
-    public function getProfile(): UserProfileUid
-    {
-        return $this->profile;
-    }
-
+    public function findProfileGroupEvent(GroupPrefix $prefix): ?ProfileGroupEvent;
 }
