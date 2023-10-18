@@ -92,7 +92,7 @@ final class AuthorityController extends AbstractController
 
         if($this->isGranted('ROLE_ADMINISTRATION'))
         {
-            return $this->redirectToRoute('Core:admin.homepage');
+            return $this->redirectToRoute('core:admin.homepage');
         }
 
         return $this->redirectToRoute('Pages:user.homepage');

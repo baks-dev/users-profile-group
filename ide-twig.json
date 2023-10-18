@@ -1,7 +1,7 @@
 {
   "namespaces": [
     {
-      "namespace": "ProfileGroup",
+      "namespace": "users-profile-group",
       "path": "Resources/view"
     }
   ]

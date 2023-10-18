@@ -26,16 +26,17 @@ declare(strict_types=1);
 namespace BaksDev\Users\Profile\Group\Repository\UserProfileChoice;
 
 use BaksDev\Auth\Email\Entity\Account;
-use BaksDev\Auth\Email\Type\Status\AccountStatus;
-use BaksDev\Auth\Email\Type\Status\AccountStatusEnum;
+use BaksDev\Auth\Email\Entity\Status\AccountStatus;
+use BaksDev\Auth\Email\Type\EmailStatus\EmailStatus;
+use BaksDev\Auth\Email\Type\EmailStatus\Status\EmailStatusActive;
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Users\Profile\Group\Entity\Users\ProfileGroupUsers;
 use BaksDev\Users\Profile\UserProfile\Entity\Info\UserProfileInfo;
 use BaksDev\Users\Profile\UserProfile\Entity\Personal\UserProfilePersonal;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
-use BaksDev\Users\Profile\UserProfile\Type\Status\UserProfileStatus;
-use BaksDev\Users\Profile\UserProfile\Type\Status\UserProfileStatusEnum;
+use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\Status\UserProfileStatusActive;
+use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\UserProfileStatus;
 use Generator;
 
 final class UserProfileChoice implements UserProfileChoiceInterface
@@ -80,7 +81,7 @@ final class UserProfileChoice implements UserProfileChoiceInterface
             UserProfileInfo::TABLE,
             'info',
             'info.profile = profiles.profile AND info.status = :status')
-            ->setParameter('status', new UserProfileStatus(UserProfileStatusEnum::ACTIVE), UserProfileStatus::TYPE);
+            ->setParameter('status', new UserProfileStatus(UserProfileStatusActive::class), UserProfileStatus::TYPE);
 
 
         $qb->leftJoin(
@@ -98,11 +99,11 @@ final class UserProfileChoice implements UserProfileChoiceInterface
 
         $qb->join(
             'account',
-            \BaksDev\Auth\Email\Entity\Status\AccountStatus::TABLE,
+            AccountStatus::TABLE,
             'status',
             'status.event = account.event AND status.status = :account_status')
 
-        ->setParameter('account_status', new AccountStatus(AccountStatusEnum::ACTIVE), AccountStatus::TYPE);
+        ->setParameter('account_status', new EmailStatus(EmailStatusActive::class), EmailStatus::TYPE);
 
 
         $qb->allGroupByExclude();

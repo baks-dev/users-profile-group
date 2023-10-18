@@ -69,7 +69,7 @@ final class AddController extends AbstractController
 
         // Форма
         $form = $this->createForm(ProfileGroupUsersForm::class, $ProfileGroupUsersDTO, [
-            'action' => $this->generateUrl('ProfileGroup:admin.users.add'),
+            'action' => $this->generateUrl('users-profile-group:admin.users.add'),
         ]);
 
         $form->handleRequest($request);
@@ -91,7 +91,7 @@ final class AddController extends AbstractController
                     'admin.profile.group'
                 );
 
-                return $this->redirectToRoute('ProfileGroup:admin.users.index');
+                return $this->redirectToRoute('users-profile-group:admin.users.index');
             }
 
             $this->addFlash(

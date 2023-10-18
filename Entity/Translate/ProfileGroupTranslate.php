@@ -103,7 +103,7 @@ class ProfileGroupTranslate extends EntityEvent
 
     public function name(Locale $locale): ?string
     {
-        if($this->local->getValue() === $locale->getValue())
+        if($this->local->getLocalValue() === $locale->getLocalValue())
         {
             return $this->name;
         }

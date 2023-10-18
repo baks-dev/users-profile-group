@@ -76,7 +76,7 @@ final class DeleteController extends AbstractController
         $ProfileGroupUsers?->getDto($ProfileGroupUsersDeleteDTO);
 
         $form = $this->createForm(ProfileGroupUsersDeleteForm::class, $ProfileGroupUsersDeleteDTO, [
-            'action' => $this->generateUrl('ProfileGroup:admin.users.delete',
+            'action' => $this->generateUrl('users-profile-group:admin.users.delete',
                 ['profile' => $profile]
             )]);
 
@@ -89,7 +89,7 @@ final class DeleteController extends AbstractController
             if($ProfileGroupUsers instanceof ProfileGroupUsers)
             {
                 $this->addFlash('admin.page.users', 'admin.success.delete', 'admin.profile.group');
-                return $this->redirectToRoute('ProfileGroup:admin.users.index');
+                return $this->redirectToRoute('users-profile-group:admin.users.index');
             }
 
             $this->addFlash(
@@ -99,7 +99,7 @@ final class DeleteController extends AbstractController
                 $ProfileGroupUsers
             );
 
-            return $this->redirectToRoute('ProfileGroup:admin.users.index', status: 400);
+            return $this->redirectToRoute('users-profile-group:admin.users.index', status: 400);
         }
 
         return $this->render(['form' => $form->createView()]);

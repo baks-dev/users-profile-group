@@ -13,6 +13,6 @@ return function (RoutingConfigurator $routes) {
         $MODULE.'Controller/**/*Test.php'
     )
         ->prefix(\BaksDev\Core\Type\Locale\Locale::routes())
-        ->namePrefix('ProfileGroup:')
+        ->namePrefix('users-profile-group:')
     ;
 };

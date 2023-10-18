@@ -50,6 +50,6 @@ final class ExistProfileGroup implements ExistProfileGroupInterface
             ->where('usr.profile = :profile')
             ->setParameter('profile', $profile, UserProfileUid::TYPE);
 
-        return $qb->enableCache('ProfileGroup', 3600)->fetchExist();
+        return $qb->enableCache('users-profile-group', 3600)->fetchExist();
     }
 }

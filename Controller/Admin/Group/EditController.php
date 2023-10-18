@@ -55,7 +55,7 @@ final class EditController extends AbstractController
 
         // Форма
         $form = $this->createForm(ProfileGroupForm::class, $ProfileGroupDTO, [
-            'action' => $this->generateUrl('ProfileGroup:admin.group.newedit.edit',
+            'action' => $this->generateUrl('users-profile-group:admin.group.newedit.edit',
                 ['id' => $ProfileGroupDTO->getEvent()]),
         ]);
         $form->handleRequest($request);
@@ -72,7 +72,7 @@ final class EditController extends AbstractController
                     'admin.profile.group'
                 );
 
-                return $this->redirectToRoute('ProfileGroup:admin.group.index');
+                return $this->redirectToRoute('users-profile-group:admin.group.index');
             }
 
             $this->addFlash(

@@ -64,7 +64,7 @@ final class ProfileGroupsChoice implements ProfileGroupsChoiceInterface
         ;
         
         return $qb
-            ->enableCache('ProfileGroup', 86400)
+            ->enableCache('users-profile-group', 86400)
             ->fetchAllHydrate(GroupPrefix::class);
 
     }

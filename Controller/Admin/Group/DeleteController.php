@@ -54,7 +54,7 @@ final class DeleteController extends AbstractController
         $ProfileGroupEvent->getDto($ProfileGroupDeleteDTO);
 
         $form = $this->createForm(ProfileGroupDeleteForm::class, $ProfileGroupDeleteDTO, [
-            'action' => $this->generateUrl('ProfileGroup:admin.group.delete',
+            'action' => $this->generateUrl('users-profile-group:admin.group.delete',
                 ['id' => $ProfileGroupDeleteDTO->getEvent()]),
         ]);
         $form->handleRequest($request);
@@ -81,7 +81,7 @@ final class DeleteController extends AbstractController
                 $ProfileGroup
             );
 
-            return $this->redirectToRoute('ProfileGroup:admin.index', status: 400);
+            return $this->redirectToRoute('users-profile-group:admin.index', status: 400);
         }
 
         return $this->render([

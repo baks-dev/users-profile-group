@@ -51,7 +51,7 @@ final class Role implements RoleInterface, MenuAdminInterface
     /** Метод возвращает PATH раздела */
     public function getPath(): string
     {
-        return 'ProfileGroup:admin.group.index';
+        return 'users-profile-group:admin.group.index';
     }
 
     /**

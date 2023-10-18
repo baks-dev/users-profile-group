@@ -70,7 +70,7 @@ final class SwitchUserListener
     {
         if($this->redirect)
         {
-            $url = $this->router->generate('Core:redirect', ['url' => $this->redirect]);
+            $url = $this->router->generate('core:redirect', ['url' => $this->redirect]);
 
             $response = new RedirectResponse($url);
             $event->setResponse($response);

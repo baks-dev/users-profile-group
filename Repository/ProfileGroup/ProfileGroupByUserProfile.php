@@ -70,7 +70,7 @@ final class ProfileGroupByUserProfile implements ProfileGroupByUserProfileInterf
         }
 
         $group = $qb
-            ->enableCache('ProfileGroup', 3600)
+            ->enableCache('users-profile-group', 3600)
             ->fetchOne();
 
         return $group ? new GroupPrefix($group) : null;

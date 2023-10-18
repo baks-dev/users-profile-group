@@ -99,6 +99,11 @@ final class ProfileGroupDTO implements ProfileGroupEventInterface
 
     public function addTranslate(Trans\ProfileGroupTranslateDTO $trans): void
     {
+        if(empty($trans->getLocal()->getLocalValue()))
+        {
+            return;
+        }
+
         if(!$this->translate->contains($trans))
         {
             $this->translate->add($trans);

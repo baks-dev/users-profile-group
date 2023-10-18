@@ -28,7 +28,7 @@
 
             {# Добавить #}
             {% if is_granted(ROLE~'_NEW') or is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('ProfileGroup:admin.group.newedit.new') }}" class="btn btn-danger fw-bolder">
+                <a href="{{ path('users-profile-group:admin.group.newedit.new') }}" class="btn btn-danger fw-bolder">
                     {{ 'btn.new'|trans({}, 'core.btn') }}
                 </a>
             {% endif %}

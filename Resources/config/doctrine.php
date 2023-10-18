@@ -29,11 +29,11 @@ return static function(DoctrineConfig $doctrine) {
 
     $MODULE = substr(__DIR__, 0, strpos(__DIR__, "Resources"));
 
-    $emDefault->mapping('ProfileGroup')
+    $emDefault->mapping('users-profile-group')
 		->type('attribute')
 		->dir($MODULE.'Entity')
 		->isBundle(false)
 		->prefix('BaksDev\Users\Profile\Group\Entity')
-		->alias('ProfileGroup')
+		->alias('users-profile-group')
 	;
 };
