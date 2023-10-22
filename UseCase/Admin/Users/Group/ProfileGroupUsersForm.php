@@ -85,14 +85,6 @@ final class ProfileGroupUsersForm extends AbstractType
         }
 
 
-        //$groups = $this->profileGroupsChoice->findProfileGroupsChoiceByProfile($profile);
-
-//        foreach($groups as $group)
-//        {
-//            dump($group);
-//        }
-
-
         $builder
             ->add('prefix', ChoiceType::class, [
                 'choices' => $this->profileGroupsChoice->findProfileGroupsChoiceByProfile($profile),
