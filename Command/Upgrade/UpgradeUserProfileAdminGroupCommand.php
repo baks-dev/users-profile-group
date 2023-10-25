@@ -77,7 +77,7 @@ class UpgradeUserProfileAdminGroupCommand extends Command implements ProjectUpgr
 
             if(!$UserProfileUid)
             {
-                $io->warning('Профиль администратора не найден');
+                $io->warning('Необходимо добавить профиль пользователю либо сделать его активным. Профиль администратора не найден.');
                 return Command::INVALID;
             }
 

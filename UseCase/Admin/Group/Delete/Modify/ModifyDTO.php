@@ -18,8 +18,10 @@
 
 namespace BaksDev\Users\Profile\Group\UseCase\Admin\Group\Delete\Modify;
 
+use BaksDev\Core\Type\Modify\Modify\ModifyActionDelete;
 use BaksDev\Core\Type\Modify\ModifyAction;
-use BaksDev\Core\Type\Modify\ModifyActionEnum;
+use BaksDev\Core\Type\Modify\Modify\ModifyActionNew;
+use BaksDev\Core\Type\Modify\Modify\ModifyActionUpdate;
 use BaksDev\Users\Profile\Group\Entity\Modify\ProfileGroupModifyInterface;
 
 final class ModifyDTO implements ProfileGroupModifyInterface
@@ -30,7 +32,7 @@ final class ModifyDTO implements ProfileGroupModifyInterface
 	
 	public function __construct()
 	{
-		$this->action = new ModifyAction(ModifyActionEnum::DELETE);
+		$this->action = new ModifyAction(ModifyActionDelete::class);
 	}
 
 	public function getAction() : ModifyAction
