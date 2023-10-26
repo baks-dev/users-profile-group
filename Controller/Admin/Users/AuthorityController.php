@@ -95,6 +95,6 @@ final class AuthorityController extends AbstractController
             return $this->redirectToRoute('core:admin.homepage');
         }
 
-        return $this->redirectToRoute('Pages:user.homepage');
+        return $this->redirectToRoute('core:user.homepage');
     }
 }
