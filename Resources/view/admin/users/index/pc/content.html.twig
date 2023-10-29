@@ -47,6 +47,10 @@
 					<th>#</th>
 					<th class="text-nowrap">Название группы</th>
 					<th class="text-nowrap">Профиль пользователя</th>
+					{% if is_granted('ROLE_ADMIN') %}
+						<th class="text-nowrap">&nbsp;</th>
+					{% endif %}
+
 				</tr>
 				</thead>
 				<tbody>

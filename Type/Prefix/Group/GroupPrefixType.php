@@ -26,14 +26,13 @@ final class GroupPrefixType extends StringType
 {
 	public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
 	{
-		return $value instanceof GroupPrefix ? $value->getValue() : $value;
+		return (string) $value;
 	}
 
 	public function convertToPHPValue($value, AbstractPlatform $platform): mixed
 	{
 		return !empty($value) ? new GroupPrefix($value) : null;
 	}
-	
 	
 	public function getName(): string
 	{

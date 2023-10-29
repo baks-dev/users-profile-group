@@ -27,15 +27,13 @@ final class RoleVoterPrefixType extends StringType
 
 	public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
 	{
-		return $value instanceof RoleVoterPrefix ? $value->getValue() : $value;
+		return (string) $value;
 	}
-	
 	
 	public function convertToPHPValue($value, AbstractPlatform $platform): mixed
 	{
 		return !empty($value) ? new RoleVoterPrefix($value) : null;
 	}
-	
 	
 	public function getName(): string
 	{

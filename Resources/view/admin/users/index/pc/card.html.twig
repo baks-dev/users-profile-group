@@ -70,31 +70,17 @@
         </div>
     </td>
 
-    <td >
-        <a href='{{ path(app.current_route, {'authority' : item.profile_id }) }}'
-           class="badge text-bg-light text-decoration-none"
-        >
-            Авторизоваться
-        </a>
-
-        {# {% if is_granted(ROLE~'_EDIT') or is_granted('ROLE_ADMIN') %}
-        #}{# Название #}{#
-        <a href="{{ path('UserGroup:admin.newedit.edit', { id: item.event }) }}"
-                class="text-decoration-none"
-        >
-            {{ item.name }}
-        </a>
-    {% else %}
-        {{ item.name }}
+    {% if is_granted('ROLE_ADMIN') %}
+        <td >
+            <a href='{{ path('users-user:admin.switch', { id : item.usr  }) }}'
+               class="badge text-bg-light text-decoration-none"
+            >
+                Авторизоваться
+            </a>
+        </td>
     {% endif %}
-        #}
 
-        {# Описание #}
-        {# <div class="text-muted small">
-			{{ string_width(item.description, 150)|raw }}
-		</div>
-        #}
-    </td>
+
 
 </tr>
 

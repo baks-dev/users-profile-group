@@ -38,12 +38,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 final class ProfileGroupDeleteHandler extends AbstractHandler
 {
-
-
     public function handle(ProfileGroupDeleteDTO $command): string|ProfileGroup
     {
-
-
         /** Валидация WbSupplyNewDTO  */
         $this->validatorCollection->add($command);
 

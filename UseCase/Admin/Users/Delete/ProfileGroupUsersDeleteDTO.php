@@ -48,7 +48,7 @@ final class ProfileGroupUsersDeleteDTO implements ProfileGroupUsersInterface
     /**
      * Доверенность профиля пользователя
      */
-    #[Assert\NotBlank]
+    //#[Assert\NotBlank]
     private readonly UserProfileUid $authority;
 
     /**
