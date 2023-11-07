@@ -53,7 +53,7 @@ final class ProfileGroupDeleteHandler extends AbstractHandler
         }
         catch(DomainException $errorUniqid)
         {
-            return $errorUniqid;
+            return $errorUniqid->getMessage();
         }
 
         /** Валидация всех объектов */
