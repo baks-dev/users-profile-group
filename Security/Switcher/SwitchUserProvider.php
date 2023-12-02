@@ -64,7 +64,7 @@ final class SwitchUserProvider implements UserProviderInterface
         $this->cache = $cache;
     }
 
-    public function refreshUser(UserInterface $user)
+    public function refreshUser(UserInterface $user): UserInterface
     {
         return $user;
     }
@@ -74,7 +74,7 @@ final class SwitchUserProvider implements UserProviderInterface
      *
      * @return bool
      */
-    public function supportsClass(string $class)
+    public function supportsClass(string $class): bool
     {
         return User::class === $class;
     }
@@ -95,7 +95,7 @@ final class SwitchUserProvider implements UserProviderInterface
         // 0189cc73-c70d-7a82-803a-544416397705 - АДМИН
         //dd($current);
 
-        if(!$current)
+        if(!$current || !$current instanceof UserInterface)
         {
             throw new InvalidArgumentException('User not found');
         }
@@ -117,7 +117,7 @@ final class SwitchUserProvider implements UserProviderInterface
          * Если не авторизован в пользователя и (Администратор ресурса или профиль принадлежит пользователю)
          * - не проверяем доверенность и сразу авторизуем
          */
-        $ADMIN = $token instanceof SwitchUserToken ? false : in_array('ROLE_ADMIN', $current->getRoles());
+        $ADMIN = !$token instanceof SwitchUserToken && in_array('ROLE_ADMIN', $current->getRoles());
 
 
         /** Роли профиля авторизации  */
