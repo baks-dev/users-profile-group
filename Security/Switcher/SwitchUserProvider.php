@@ -86,6 +86,9 @@ final class SwitchUserProvider implements UserProviderInterface
         /* Идентификатор профиля авторизации */
         $authority = new UserProfileUid($identifier);
 
+
+
+
         /* Идентификатор пользователя */
         //$current = $this->tokenStorage->getToken()?->getUser();
 
@@ -123,17 +126,25 @@ final class SwitchUserProvider implements UserProviderInterface
         /** Роли профиля авторизации  */
         if($ADMIN || $user->getId()->equals($current->getId()))
         {
-            if($ADMIN)
-            {
-                /** Тумблер профилей авторизации пользователя */
-                $AppCache = $this->cache->init('Authority', 0);
-                $save = $AppCache->getItem($user->getUserIdentifier());
-                $save->set($authority);
-                $save->expiresAfter(DateInterval::createFromDateString('1 weeks'));
-                $AppCache->save($save);
-            }
+//            //if($ADMIN)
+//            //{
+//                /** Тумблер профилей авторизации пользователя */
+//                $AppCache = $this->cache->init('Authority', 0);
+//                $save = $AppCache->getItem($user->getUserIdentifier());
+//                $save->set($authority);
+//                $save->expiresAfter(DateInterval::createFromDateString('1 weeks'));
+//                $AppCache->save($save);
+//            //}
 
-            $roles = $this->getUserById->fetchAllRoleUser($authority);
+            /** Если пользователь Администратор ресурса и авторизуется в собственный профиль - присваиваем родительские роли */
+            if($ADMIN && $user->getId()->equals($current->getId()))
+            {
+                $roles = $current->getRoles();
+            }
+            else
+            {
+                $roles = $this->getUserById->fetchAllRoleUser($authority);
+            }
         }
         else
         {
