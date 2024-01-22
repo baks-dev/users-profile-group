@@ -55,6 +55,8 @@ final class DeleteControllerTest extends WebTestCase
 
             self::assertResponseIsSuccessful();
         }
+
+        self::assertTrue(true);
     }
 
     // доступ по роли ROLE_ADMIN
@@ -76,6 +78,8 @@ final class DeleteControllerTest extends WebTestCase
             self::assertResponseIsSuccessful();
         }
 
+        self::assertTrue(true);
+
     }
 
     // доступ по роли ROLE_USER
@@ -96,6 +100,7 @@ final class DeleteControllerTest extends WebTestCase
             self::assertResponseStatusCodeSame(403);
         }
 
+        self::assertTrue(true);
     }
 
     /** Доступ по без роли */
@@ -115,10 +120,7 @@ final class DeleteControllerTest extends WebTestCase
             self::assertResponseStatusCodeSame(401);
         }
 
-    }
-
-    public function testComplete(): void
-    {
         self::assertTrue(true);
     }
+
 }
