@@ -109,6 +109,9 @@ final class ProfileGroupEditTest extends KernelTestCase
 
         self::assertTrue(($handle instanceof ProfileGroup), $handle.': Ошибка ProfileGroup');
 
+        $em->clear();
+        //$em->close();
+
     }
 
     public function testComplete(): void
@@ -121,5 +124,8 @@ final class ProfileGroupEditTest extends KernelTestCase
         $ProfileGroupEvent = $em->getRepository(ProfileGroupEvent::class)->findBy(['prefix' => GroupPrefix::TEST]);
         self::assertNotNull($ProfileGroupEvent);
         self::assertCount(2, $ProfileGroupEvent);
+
+        $em->clear();
+        //$em->close();
     }
 }

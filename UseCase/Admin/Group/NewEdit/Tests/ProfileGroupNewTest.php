@@ -71,6 +71,9 @@ final class ProfileGroupNewTest extends KernelTestCase
 
             $em->flush();
         }
+
+        $em->clear();
+        //$em->close();
     }
 
 

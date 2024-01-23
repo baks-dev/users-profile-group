@@ -130,5 +130,8 @@ final class ProfileGroupDeleteTest extends KernelTestCase
 
         self::assertNull($ProfileGroup);
 
+        $em->clear();
+        //$em->close();
+
     }
 }

@@ -70,7 +70,7 @@
         </div>
     </td>
 
-    {% if is_granted('ROLE_ADMIN') %}
+    {% if is_granted('ROLE_ADMIN') and item.usr %}
         <td >
             <a href='{{ path('users-user:admin.switch', { id : item.usr  }) }}'
                class="badge text-bg-light text-decoration-none"
