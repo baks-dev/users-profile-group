@@ -28,11 +28,16 @@ return static function (FrameworkConfig $framework) {
         ->transport('users-profile-group')
         ->dsn('%env(MESSENGER_TRANSPORT_DSN)%')
         ->options(['queue_name' => 'users-profile-group'])
+        ->failureTransport('failed-users-profile-group')
         ->retryStrategy()
         ->maxRetries(3)
         ->delay(1000)
         ->maxDelay(0)
         ->multiplier(3) // увеличиваем задержку перед каждой повторной попыткой
         ->service(null)
+
     ;
+
+    $messenger->transport('failed-users-profile-group')
+        ->dsn('%env(MESSENGER_TRANSPORT_DSN)%');
 };
