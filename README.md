@@ -1,6 +1,7 @@
 # BaksDev Profile Group
 
-![Version](https://img.shields.io/badge/version-7.0.11-blue) ![php 8.2+](https://img.shields.io/badge/php-min%208.1-red.svg)
+[![Version](https://img.shields.io/badge/version-7.0.12-blue)](https://github.com/baks-dev/users-profile-group/releases)
+![php 8.2+](https://img.shields.io/badge/php-min%208.1-red.svg)
 
 Модуль групп профилей пользователя
 
