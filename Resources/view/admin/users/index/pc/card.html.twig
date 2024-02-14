@@ -26,7 +26,7 @@
 
 
 
-            <a href="{{ path('users-profile-group:admin.users.add', { profile: item.profile_id }) }}" class="pe-3 modal-link"
+            <a href="{{ path('users-profile-group:admin.users.add', { profile: item.profile_id }) }}" class="pe-3 modal-link disabled"
                data-bs-toggle="modal"
                data-bs-target="#modal">
                 <div class="rounded-circle bg-contain lazy p-1" style="width: 50px; height: 50px;"
@@ -36,7 +36,7 @@
 
             <div>
                 <a href="{{ path('users-profile-group:admin.users.add', { profile: item.profile_id }) }}"
-                   class="text-decoration-none modal-link"
+                   class="text-decoration-none modal-link disabled"
                    data-bs-toggle="modal"
                    data-bs-target="#modal"
                 >
