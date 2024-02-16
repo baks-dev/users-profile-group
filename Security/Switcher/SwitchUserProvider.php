@@ -82,21 +82,12 @@ final class SwitchUserProvider implements UserProviderInterface
 
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
-
         /* Идентификатор профиля авторизации */
         $authority = new UserProfileUid($identifier);
-
-
-
-
-        /* Идентификатор пользователя */
-        //$current = $this->tokenStorage->getToken()?->getUser();
 
         $token = $this->tokenStorage->getToken();
         $current = $token instanceof SwitchUserToken ? $token->getOriginalToken()->getUser() : $token?->getUser();
 
-        // 0189cc73-c70d-7a82-803a-544416397705 - АДМИН
-        //dd($current);
 
         if(!$current || !$current instanceof UserInterface)
         {
@@ -126,16 +117,6 @@ final class SwitchUserProvider implements UserProviderInterface
         /** Роли профиля авторизации  */
         if($ADMIN || $user->getId()->equals($current->getId()))
         {
-//            //if($ADMIN)
-//            //{
-//                /** Тумблер профилей авторизации пользователя */
-//                $AppCache = $this->cache->init('Authority', 0);
-//                $save = $AppCache->getItem($user->getUserIdentifier());
-//                $save->set($authority);
-//                $save->expiresAfter(DateInterval::createFromDateString('1 weeks'));
-//                $AppCache->save($save);
-//            //}
-
             /** Если пользователь Администратор ресурса и авторизуется в собственный профиль - присваиваем родительские роли */
             if($ADMIN && $user->getId()->equals($current->getId()))
             {
