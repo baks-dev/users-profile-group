@@ -49,7 +49,9 @@ final class IndexController extends AbstractController
     {
         // Поиск
         $search = new SearchDTO();
-        $searchForm = $this->createForm(SearchForm::class, $search);
+        $searchForm = $this->createForm(SearchForm::class, $search,
+            ['action' => $this->generateUrl('users-profile-group:admin.users.index')]
+        );
         $searchForm->handleRequest($request);
 
 
