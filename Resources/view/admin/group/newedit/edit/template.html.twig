@@ -13,7 +13,7 @@
 
 
 {% block javascript %}
-<script async nonce="{{ csp_nonce() }}" class="lazy" data-src="/assets/users-profile-group/script.min.js?v={{ version }}" ></script>
-<script async data-src="/assets/js/radio.input.min.js?v={{ version }}" class="lazy"></script>
+<script nonce='{{ csp_nonce() }}' async  data-src="/assets/users-profile-group/script.min.js?v={{ version }}" class="lazy"></script>
+<script nonce='{{ csp_nonce() }}' async  data-src="/assets/js/radio.input.min.js?v={{ version }}" class="lazy"></script>
 {% endblock %}
 
