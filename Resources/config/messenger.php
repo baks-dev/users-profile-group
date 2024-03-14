@@ -39,5 +39,7 @@ return static function (FrameworkConfig $framework) {
     ;
 
     $messenger->transport('failed-users-profile-group')
-        ->dsn('%env(MESSENGER_TRANSPORT_DSN)%');
+        ->dsn('%env(MESSENGER_TRANSPORT_DSN)%')
+        ->options(['queue_name' => 'failed-users-profile-group'])
+    ;
 };
