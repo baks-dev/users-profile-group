@@ -54,23 +54,29 @@ final class ProfileGroupNewTest extends KernelTestCase
         $em = self::getContainer()->get(EntityManagerInterface::class);
 
         $ProfileGroup = $em->getRepository(ProfileGroup::class)
-            ->find(GroupPrefix::TEST);
-
+            ->find(GroupPrefix::TEST)
+            //->find('ROLE_660083B81EE76')
+        ;
 
         if($ProfileGroup)
         {
             $em->remove($ProfileGroup);
-
-            $WbProductSettingsEventCollection = $em->getRepository(ProfileGroupEvent::class)
-                ->findBy(['prefix' => GroupPrefix::TEST]);
-
-            foreach($WbProductSettingsEventCollection as $remove)
-            {
-                $em->remove($remove);
-            }
-
-            $em->flush();
         }
+
+        $WbProductSettingsEventCollection = $em->getRepository(ProfileGroupEvent::class)
+            ->findBy(['prefix' => GroupPrefix::TEST])
+            //->findBy(['prefix' => 'ROLE_660083B81EE76'])
+    ;
+
+
+        foreach($WbProductSettingsEventCollection as $remove)
+        {
+            $em->remove($remove);
+        }
+
+        $em->flush();
+
+
 
         $em->clear();
         //$em->close();
