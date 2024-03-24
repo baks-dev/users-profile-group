@@ -32,7 +32,7 @@ final class RoleVoterPrefix
 
 	public function __construct(?string $value = null)
 	{
-        if (Kernel::isTestEnvironment())
+        if (empty($value) && Kernel::isTestEnvironment())
         {
             $this->value = mb_strtoupper(self::TEST);
             return;

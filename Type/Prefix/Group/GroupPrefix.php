@@ -39,7 +39,7 @@ final class GroupPrefix
         mixed $attr = null,
     )
     {
-        if (Kernel::isTestEnvironment())
+        if (empty($value) && Kernel::isTestEnvironment())
         {
             $this->value = mb_strtoupper(self::TEST);
             return;

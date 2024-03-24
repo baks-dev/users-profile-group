@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
+ *  Copyright 2024.  Baks.dev <admin@baks.dev>
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -21,55 +21,14 @@
  *  THE SOFTWARE.
  */
 
-namespace BaksDev\Users\Profile\Group\Type\Prefix\Role;
+namespace BaksDev\Users\Profile\Group\Repository\ProfilesByRole;
 
-use App\Kernel;
-use InvalidArgumentException;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
-final class GroupRolePrefix
+interface ProfilesByRoleInterface
 {
-	public const TYPE = 'prefix_role';
-
-	public const TEST = 'ROLE_PREFIX_TEST';
-
-	private $value;
-
-    public function __construct(?string $value = null)
-	{
-        if (empty($value) && Kernel::isTestEnvironment())
-        {
-            $this->value = mb_strtoupper(self::TEST);
-            return;
-        }
-
-		if(empty($value))
-		{
-			throw new InvalidArgumentException('You need to pass a value Role Prefix');
-		}
-		
-		if(!preg_match('/ROLE_(\w{1,10})/', $value))
-		{
-			throw new InvalidArgumentException('Incorrect Role Prefix.');
-		}
-		
-		$this->value = mb_strtoupper($value);
-    }
-	
-	
-	public function __toString(): string
-	{
-		return $this->value;
-	}
-	
-	
-	public function getValue(): string
-	{
-		return $this->value;
-	}
-
-    public function equals(string|self $prefix): bool
-    {
-        return $this->value === (string) $prefix;
-    }
-
+    /**
+     * Метод возвращает массив профилей, имеющих определенную роль
+     */
+    public function findAll(string $prefix, ?UserProfileUid $profile): ?array;
 }
