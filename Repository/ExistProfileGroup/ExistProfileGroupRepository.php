@@ -23,56 +23,35 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Users\Profile\Group\Repository\ProfileGroup;
+namespace BaksDev\Users\Profile\Group\Repository\ExistProfileGroup;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
 use BaksDev\Users\Profile\Group\Entity\Users\ProfileGroupUsers;
-use BaksDev\Users\Profile\Group\Type\Prefix\Group\GroupPrefix;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
-final class ProfileGroupByUserProfile implements ProfileGroupByUserProfileInterface
+final class ExistProfileGroupRepository implements ExistProfileGroupInterface
 {
     private DBALQueryBuilder $DBALQueryBuilder;
 
-    public function __construct(
-        DBALQueryBuilder $DBALQueryBuilder,
-    )
+    public function __construct(DBALQueryBuilder $DBALQueryBuilder)
     {
         $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
-
+    
     /**
-     * Возвращает префикс группы (GroupPrefix) профиля пользователя
-     * $authority = false - если администратор ресурса
+     * Метод проверяет, имеется ли группа у профиля пользователя
      */
-    public function findProfileGroupByUserProfile(
-        UserProfileUid $profile,
-        UserProfileUid|bool|null $authority = null // доверенность
-    ): ?GroupPrefix
+    public function isExistsProfileGroup(UserProfileUid $profile): bool
     {
         $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
-        $qb->select('groups.prefix');
-        $qb->from(ProfileGroupUsers::TABLE, 'groups')
-            ->where('groups.profile = :profile')
+        $qb
+            ->from(ProfileGroupUsers::TABLE, 'usr')
+            ->where('usr.profile = :profile')
             ->setParameter('profile', $profile, UserProfileUid::TYPE);
 
-        /** Если доверительная группа */
-        if($authority)
-        {
-            $qb->andWhere('groups.authority = :authority')
-                ->setParameter('authority', $authority, UserProfileUid::TYPE);
-        }
-
-        if($authority === null)
-        {
-            $qb->andWhere('groups.authority IS NULL');
-        }
-
-        $group = $qb
+        return $qb
             ->enableCache('users-profile-group', 3600)
-            ->fetchOne();
-
-        return $group ? new GroupPrefix($group) : null;
+            ->fetchExist();
     }
 }

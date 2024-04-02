@@ -23,33 +23,42 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Users\Profile\Group\Repository\ExistAdminProfile;
+namespace BaksDev\Users\Profile\Group\Repository\ProfileGroupCurrentEvent;
 
-use BaksDev\Core\Doctrine\DBALQueryBuilder;
-use BaksDev\Users\Profile\Group\Entity\Users\ProfileGroupUsers;
+use BaksDev\Core\Doctrine\ORMQueryBuilder;
+use BaksDev\Users\Profile\Group\Entity\Event\ProfileGroupEvent;
+use BaksDev\Users\Profile\Group\Entity\ProfileGroup;
 use BaksDev\Users\Profile\Group\Type\Prefix\Group\GroupPrefix;
 
-final class ExistAdminProfile implements ExistAdminProfileInterface
+final class ProfileGroupCurrentEventRepository implements ProfileGroupCurrentEventInterface
 {
-    private DBALQueryBuilder $DBALQueryBuilder;
+    private ORMQueryBuilder $ORMQueryBuilder;
 
-    public function __construct(DBALQueryBuilder $DBALQueryBuilder,)
+    public function __construct(ORMQueryBuilder $ORMQueryBuilder)
     {
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
+        $this->ORMQueryBuilder = $ORMQueryBuilder;
     }
 
     /**
-     * Метод проверяет, имеется ли профиль администратора ресурса 'ROLE_ADMIN'
+     * Получает активное событие группы
      */
-    public function isExistsAdminProfile(): bool
+    public function findProfileGroupEvent(GroupPrefix $prefix): ?ProfileGroupEvent
     {
-        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
+        $qb->select('event');
         $qb
-            ->from(ProfileGroupUsers::TABLE, 'usr')
-            ->where('usr.prefix = :prefix')
-            ->setParameter('prefix', new GroupPrefix('ROLE_ADMIN'), GroupPrefix::TYPE);
+            ->from(ProfileGroup::class, 'profile_group')
+            ->where('profile_group.prefix = :prefix')
+            ->setParameter('prefix', $prefix, GroupPrefix::TYPE);
 
-        return $qb->fetchExist();
+        $qb->join(
+            ProfileGroupEvent::class,
+            'event',
+            'WITH',
+            'event.id = profile_group.event'
+        );
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }

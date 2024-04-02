@@ -23,35 +23,49 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Users\Profile\Group\Repository\ExistProfileGroup;
+namespace BaksDev\Users\Profile\Group\Repository\ProfileGroupsChoice;
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
-use BaksDev\Users\Profile\Group\Entity\Users\ProfileGroupUsers;
+use BaksDev\Users\Profile\Group\Entity\ProfileGroup;
+use BaksDev\Users\Profile\Group\Entity\Translate\ProfileGroupTranslate;
+use BaksDev\Users\Profile\Group\Type\Prefix\Group\GroupPrefix;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
+use Generator;
 
-final class ExistProfileGroup implements ExistProfileGroupInterface
+final class ProfileGroupsChoiceRepository implements ProfileGroupsChoiceInterface
 {
     private DBALQueryBuilder $DBALQueryBuilder;
 
-    public function __construct(DBALQueryBuilder $DBALQueryBuilder)
+    public function __construct(DBALQueryBuilder $DBALQueryBuilder,)
     {
         $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
-    
+
+
     /**
-     * Метод проверяет, имеется ли группа у профиля пользователя
+     * Список идентификаторов групп ролей профиля пользователя
      */
-    public function isExistsProfileGroup(UserProfileUid $profile): bool
+    public function findProfileGroupsChoiceByProfile(UserProfileUid $profile): Generator
     {
-        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class)->bindLocal();
 
-        $qb
-            ->from(ProfileGroupUsers::TABLE, 'usr')
-            ->where('usr.profile = :profile')
-            ->setParameter('profile', $profile, UserProfileUid::TYPE);
+        $qb->select('groups.prefix AS value');
+        $qb->addSelect('trans.name AS attr');
+        $qb->from(ProfileGroup::TABLE, 'groups');
+        $qb->leftJoin(
+            'groups',
+            ProfileGroupTranslate::TABLE,
+            'trans',
+            'trans.event = groups.event AND trans.local = :local'
+        );
 
+        $qb->where('groups.profile = :profile')
+            ->setParameter('profile', $profile, UserProfileUid::TYPE)
+        ;
+        
         return $qb
-            ->enableCache('users-profile-group', 3600)
-            ->fetchExist();
+            ->enableCache('users-profile-group', 86400)
+            ->fetchAllHydrate(GroupPrefix::class);
+
     }
 }

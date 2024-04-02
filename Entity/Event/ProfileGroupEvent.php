@@ -67,19 +67,19 @@ class ProfileGroupEvent extends EntityEvent
     /**
      * Модификатор
      */
-    #[ORM\OneToOne(mappedBy: 'event', targetEntity: ProfileGroupModify::class, cascade: ['all'])]
+    #[ORM\OneToOne(targetEntity: ProfileGroupModify::class, mappedBy: 'event', cascade: ['all'])]
     private ProfileGroupModify $modify;
 
     /**
      * Роли группы
      */
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProfileRole::class, cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: ProfileRole::class, mappedBy: 'event', cascade: ['all'])]
     private Collection $role;
 
     /**
      * Переводы
      */
-    #[ORM\OneToMany(mappedBy: 'event', targetEntity: ProfileGroupTranslate::class, cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: ProfileGroupTranslate::class, mappedBy: 'event', cascade: ['all'])]
     private Collection $translate;
 
 

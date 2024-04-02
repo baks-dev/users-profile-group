@@ -39,7 +39,7 @@ use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\Status\UserProfileS
 use BaksDev\Users\Profile\UserProfile\Type\UserProfileStatus\UserProfileStatus;
 use Generator;
 
-final class UserProfileChoice implements UserProfileChoiceInterface
+final class UserProfileChoiceRepository implements UserProfileChoiceInterface
 {
     private DBALQueryBuilder $DBALQueryBuilder;
 

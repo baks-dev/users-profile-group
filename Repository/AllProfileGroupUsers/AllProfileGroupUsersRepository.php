@@ -23,7 +23,7 @@
 
 declare(strict_types=1);
 
-namespace BaksDev\Users\Profile\Group\Repository\AllProfileGroup;
+namespace BaksDev\Users\Profile\Group\Repository\AllProfileGroupUsers;
 
 
 use BaksDev\Core\Doctrine\DBALQueryBuilder;
@@ -31,11 +31,14 @@ use BaksDev\Core\Form\Search\SearchDTO;
 use BaksDev\Core\Services\Paginator\PaginatorInterface;
 use BaksDev\Users\Profile\Group\Entity\ProfileGroup;
 use BaksDev\Users\Profile\Group\Entity\Translate\ProfileGroupTranslate;
+use BaksDev\Users\Profile\Group\Entity\Users\ProfileGroupUsers;
+use BaksDev\Users\Profile\UserProfile\Entity\Avatar\UserProfileAvatar;
+use BaksDev\Users\Profile\UserProfile\Entity\Info\UserProfileInfo;
 use BaksDev\Users\Profile\UserProfile\Entity\Personal\UserProfilePersonal;
 use BaksDev\Users\Profile\UserProfile\Entity\UserProfile;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
-final class AllProfileGroup implements AllProfileGroupInterface
+final class AllProfileGroupUsersRepository implements AllProfileGroupUsersInterface
 {
     private PaginatorInterface $paginator;
     private DBALQueryBuilder $DBALQueryBuilder;
@@ -49,46 +52,56 @@ final class AllProfileGroup implements AllProfileGroupInterface
         $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
-    /** Метод возвращает пагинатор ProfileGroup */
-    public function fetchAllProfileGroupAssociative(
+    /** Метод возвращает пагинатор ProfileGroupUsers */
+    public function fetchAllProfileGroupUsersAssociative(
         SearchDTO $search,
         ?UserProfileUid $profile
     ): PaginatorInterface
     {
-        
-        $qb = $this->DBALQueryBuilder
-            ->createQueryBuilder(self::class)
-            ->bindLocal();
+        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class)->bindLocal();
 
-        $qb->addSelect('profile_group.event');
-        $qb->from(ProfileGroup::TABLE, 'profile_group');
+        $qb->addSelect('users.profile as profile_id');
+        $qb->addSelect('trans.name as group_name');
+        $qb->from(ProfileGroupUsers::TABLE, 'users');
+        $qb->join('users', ProfileGroup::TABLE, 'groups', 'groups.prefix = users.prefix');
+
+        $qb->leftJoin('groups', ProfileGroupTranslate::TABLE,
+            'trans',
+            'trans.event = groups.event AND trans.local = :local'
+        );
+
 
         if($profile)
         {
-            $qb->where('profile_group.profile = :profile')
+            $qb->where('users.authority = :profile')
                 ->setParameter('profile', $profile, UserProfileUid::TYPE);
         }
 
-        $qb->addSelect('trans.name');
+
+        // ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ
+
+        // UserProfile
         $qb->leftJoin(
-            'profile_group',
-            ProfileGroupTranslate::TABLE,
-            'trans',
-            'trans.event = profile_group.event AND trans.local = :local'
-        );
-
-
-        /** Ответственное лицо (Профиль пользователя) */
-
-        $qb->addSelect('users_profile.id as users_profile_id');
-        $qb->leftJoin(
-            'profile_group',
+            'users',
             UserProfile::TABLE,
             'users_profile',
-            'users_profile.id = profile_group.profile'
+            'users_profile.id = users.profile'
         );
 
+
+
+        $qb->addSelect('users_profile_info.usr AS usr');
+        $qb->leftJoin(
+            'users',
+            UserProfileInfo::TABLE,
+            'users_profile_info',
+            'users_profile_info.profile = users.profile'
+        );
+        
+
+        // Personal
         $qb->addSelect('users_profile_personal.username AS users_profile_username');
+
         $qb->leftJoin(
             'users_profile',
             UserProfilePersonal::TABLE,
@@ -96,12 +109,28 @@ final class AllProfileGroup implements AllProfileGroupInterface
             'users_profile_personal.event = users_profile.event'
         );
 
+        // Avatar
+        $qb->addSelect("CONCAT ( '/upload/".UserProfileAvatar::TABLE."' , '/', users_profile_avatar.name) AS users_profile_avatar");
+        $qb->addSelect("CASE WHEN users_profile_avatar.cdn THEN  CONCAT ( 'small.', users_profile_avatar.ext) ELSE users_profile_avatar.ext END AS users_profile_avatar_ext");
+        $qb->addSelect('users_profile_avatar.cdn AS users_profile_avatar_cdn');
+
+        $qb->leftJoin(
+            'users_profile',
+            UserProfileAvatar::TABLE,
+            'users_profile_avatar',
+            'users_profile_avatar.event = users_profile.event'
+        );
+
+
         /* Поиск */
         if($search->getQuery())
         {
             $this->DBALQueryBuilder
                 ->createSearchQueryBuilder($search)
-                ->addSearchLike('trans.name');
+                ->addSearchEqualUid('users.profile')
+                ->addSearchLike('trans.name')
+                ->addSearchLike('users_profile_personal.username');
+
         }
 
         return $this->paginator->fetchAllAssociative($qb);

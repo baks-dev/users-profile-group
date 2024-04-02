@@ -32,7 +32,7 @@ use BaksDev\Users\Profile\Group\Entity\Role\Voter\ProfileVoter;
 use BaksDev\Users\Profile\Group\Entity\Users\ProfileGroupUsers;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
-final class ExistRoleByProfile implements ExistRoleByProfileInterface
+final class ExistRoleByProfileRepository implements ExistRoleByProfileInterface
 {
     private DBALQueryBuilder $DBALQueryBuilder;
 
