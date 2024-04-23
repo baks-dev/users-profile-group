@@ -87,7 +87,6 @@ class ProfileGroupEvent extends EntityEvent
     {
         $this->id = new ProfileGroupEventUid();
         $this->modify = new ProfileGroupModify($this);
-
     }
 
     /**
