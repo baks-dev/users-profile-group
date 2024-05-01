@@ -56,11 +56,15 @@ final class AuthorityController extends AbstractController
             return $this->redirectToReferer();
         }
 
+        /** Сбрасываем кеш пользователя */
+        $profileCache = $cache->init('users-profile-user');
+        $profileCache->clear();
+
         /** Сохраняем идентификатор профиля */
-        $AppCache = $cache->init('Authority', 0);
+        $AppCache = $cache->init('Authority', 86400);
         $authority = $AppCache->getItem((string) $this->getProfileUid());
         $authority->set($profile);
-        $authority->expiresAfter(DateInterval::createFromDateString('1 weeks'));
+        $authority->expiresAfter(DateInterval::createFromDateString('1 day'));
         $AppCache->save($authority);
 
         if($request->headers->get('referer'))
