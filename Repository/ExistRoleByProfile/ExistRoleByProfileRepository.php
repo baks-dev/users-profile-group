@@ -48,35 +48,35 @@ final class ExistRoleByProfileRepository implements ExistRoleByProfileInterface
      */
     public function isExistRole(UserProfileUid $profile, string $voter): bool
     {
-        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+        $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
-        $qb
-            ->from(ProfileGroupUsers::TABLE, 'group_user')
+        $dbal
+            ->from(ProfileGroupUsers::class, 'group_user')
             ->where('group_user.profile = :profile OR group_user.authority = :profile')
             ->setParameter('profile', $profile, UserProfileUid::TYPE);
 
-        $qb->join(
+        $dbal->join(
             'group_user',
-            ProfileGroup::TABLE,
+            ProfileGroup::class,
             'profile_group',
             'profile_group.prefix = group_user.prefix'
         );
 
-        $qb->join(
+        $dbal->join(
             'profile_group',
-            ProfileRole::TABLE,
+            ProfileRole::class,
             'profile_role',
             'profile_role.event = profile_group.event'
         );
 
-        $qb->join(
+        $dbal->join(
             'profile_role',
-            ProfileVoter::TABLE,
+            ProfileVoter::class,
             'group_voter',
             'group_voter.role = profile_role.id AND group_voter.prefix = :voter'
         )
             ->setParameter('voter', $voter);
 
-        return $qb->fetchExist();
+        return $dbal->fetchExist();
     }
 }

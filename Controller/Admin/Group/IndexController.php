@@ -60,12 +60,12 @@ final class IndexController extends AbstractController
         // $filterForm = $this->createForm(ProductsStocksFilterForm::class, $filter);
         // $filterForm->handleRequest($request);
 
-        // Получаем список
-        $ProfileGroup = $allProfileGroup->fetchAllProfileGroupAssociative($search, $this->getAdminFilterProfile());
-
         return $this->render(
             [
-                'query' => $ProfileGroup,
+                'query' => $allProfileGroup
+                    ->search($search)
+                    ->fetchAllProfileGroupAssociative($this->getAdminFilterProfile()),
+
                 'search' => $searchForm->createView(),
             ]
         );

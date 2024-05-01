@@ -44,21 +44,22 @@ final class ProfileGroupCurrentEventRepository implements ProfileGroupCurrentEve
      */
     public function findProfileGroupEvent(GroupPrefix $prefix): ?ProfileGroupEvent
     {
-        $qb = $this->ORMQueryBuilder->createQueryBuilder(self::class);
+        $orm = $this->ORMQueryBuilder->createQueryBuilder(self::class);
 
-        $qb->select('event');
-        $qb
+        $orm->select('event');
+
+        $orm
             ->from(ProfileGroup::class, 'profile_group')
             ->where('profile_group.prefix = :prefix')
             ->setParameter('prefix', $prefix, GroupPrefix::TYPE);
 
-        $qb->join(
+        $orm->join(
             ProfileGroupEvent::class,
             'event',
             'WITH',
             'event.id = profile_group.event'
         );
 
-        return $qb->getQuery()->getOneOrNullResult();
+        return $orm->getQuery()->getOneOrNullResult();
     }
 }

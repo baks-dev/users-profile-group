@@ -105,16 +105,12 @@ final class ProfilesByRoleRepository implements ProfilesByRoleInterface
             ->setParameter('prefix', $prefix);
 
 
-        //        $dbal->orWhere('profile_group.prefix = :prefix');
-        //        $dbal->orWhere('profile_role.prefix = :prefix');
-        //        $dbal->orWhere('profile_voter.prefix = :prefix');
-
-
         $dbal->groupBy('profile_group_users.profile, profile_group_users.authority');
 
         $originalArray = $dbal
             ->enableCache('users-profile-group', 3600)
             ->fetchAllAssociative();
+
 
         // Получение уникальных значений ключей "profile" и "authority" без значений null
         $uniqueValues = [];
@@ -134,86 +130,4 @@ final class ProfilesByRoleRepository implements ProfilesByRoleInterface
 
         return $uniqueValues;
     }
-
-
-    //    public function isExistGranted(UserProfileUid|string $profile, string $role) : bool
-    //    {
-    //        if(!class_exists(BaksDevUsersProfileGroupBundle::class))
-    //        {
-    //            return false;
-    //        }
-    //
-    //        $profile = is_string($profile) ? new UserProfileUid($profile) : $profile;
-    //
-    //        /** Проверяем, имеется ли у пользователя группа либо доверенность */
-    //        $existGroup = $this->existProfileGroup->isExistsProfileGroup($profile);
-    //
-    //        if($existGroup)
-    //        {
-    //            /** Получаем префикс группы профиля
-    //             * $authority = false - если администратор ресурса
-    //             * */
-    //            $group = $this->profileGroupByUserProfile
-    //                ->findProfileGroupByUserProfile($profile, false);
-    //
-    //            if($group)
-    //            {
-    //                /** Получаем список ролей и правил группы */
-    //                $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
-    //
-    //                $qb->select("
-    //                   ARRAY(SELECT DISTINCT UNNEST(
-    //                        ARRAY_AGG(profile_role.prefix) ||
-    //                        ARRAY_AGG(profile_voter.prefix)
-    //                    )) AS roles
-    //                ");
-    //
-    //                $qb->from(ProfileGroup::TABLE, 'profile_group');
-    //
-    //                $qb->leftJoin(
-    //                    'profile_group',
-    //                    ProfileRole::TABLE,
-    //                    'profile_role',
-    //                    'profile_role.event = profile_group.event'
-    //                );
-    //
-    //                $qb->leftJoin(
-    //                    'profile_role',
-    //                    ProfileVoter::TABLE,
-    //                    'profile_voter',
-    //                    'profile_voter.role = profile_role.id'
-    //                );
-    //
-    //                $qb->andWhere('profile_group.prefix = :prefix')
-    //                    ->setParameter('prefix', $group, GroupPrefix::TYPE);
-    //
-    //                $qb->andWhere('profile_role.prefix IS NOT NULL');
-    //                $qb->andWhere('profile_voter.prefix IS NOT NULL');
-    //
-    //                $roles = $qb
-    //                    ->enableCache('telegram-bot', 60)
-    //                    ->fetchOne();
-    //
-    //                if($roles)
-    //                {
-    //                    $roles = trim($roles, "{}");
-    //
-    //                    if(empty($roles))
-    //                    {
-    //                        return false;
-    //                    }
-    //
-    //                    $roles = explode(",", $roles);
-    //
-    //                    $roles[] = 'ROLE_USER';
-    //                }
-    //
-    //                $roles = array_filter($roles);
-    //
-    //                return in_array($role, $roles);
-    //            }
-    //        }
-    //
-    //        return false;
-    //    }
 }

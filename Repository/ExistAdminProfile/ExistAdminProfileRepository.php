@@ -46,7 +46,7 @@ final class ExistAdminProfileRepository implements ExistAdminProfileInterface
         $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
         $qb
-            ->from(ProfileGroupUsers::TABLE, 'usr')
+            ->from(ProfileGroupUsers::class, 'usr')
             ->where('usr.prefix = :prefix')
             ->setParameter('prefix', new GroupPrefix('ROLE_ADMIN'), GroupPrefix::TYPE);
 

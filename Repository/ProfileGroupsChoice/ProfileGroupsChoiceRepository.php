@@ -47,23 +47,28 @@ final class ProfileGroupsChoiceRepository implements ProfileGroupsChoiceInterfac
      */
     public function findProfileGroupsChoiceByProfile(UserProfileUid $profile): Generator
     {
-        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class)->bindLocal();
+        $dbal = $this->DBALQueryBuilder
+            ->createQueryBuilder(self::class)
+            ->bindLocal();
 
-        $qb->select('groups.prefix AS value');
-        $qb->addSelect('trans.name AS attr');
-        $qb->from(ProfileGroup::TABLE, 'groups');
-        $qb->leftJoin(
+        $dbal
+            ->from(ProfileGroup::class, 'groups')
+            ->where('groups.profile = :profile')
+            ->setParameter('profile', $profile, UserProfileUid::TYPE);
+
+        $dbal->leftJoin(
             'groups',
-            ProfileGroupTranslate::TABLE,
+            ProfileGroupTranslate::class,
             'trans',
             'trans.event = groups.event AND trans.local = :local'
         );
 
-        $qb->where('groups.profile = :profile')
-            ->setParameter('profile', $profile, UserProfileUid::TYPE)
-        ;
-        
-        return $qb
+
+        /** Свойства конструктора объекта гидрации */
+        $dbal->select('groups.prefix AS value');
+        $dbal->addSelect('trans.name AS attr');
+
+        return $dbal
             ->enableCache('users-profile-group', 86400)
             ->fetchAllHydrate(GroupPrefix::class);
 

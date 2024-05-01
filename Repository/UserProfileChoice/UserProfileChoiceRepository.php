@@ -56,59 +56,71 @@ final class UserProfileChoiceRepository implements UserProfileChoiceInterface
      */
     public function getCollection(UserProfileUid $profile): Generator
     {
-        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
-
-        $qb->select('profiles.profile AS value');
-        $qb->addSelect('personal.username AS attr');
+        $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
 
-        $qb->from(ProfileGroupUsers::TABLE, 'profiles');
+        $dbal
+            ->from(ProfileGroupUsers::class, 'profiles')
+            ->where('profiles.authority = :profile')
+            ->orWhere('profiles.profile = :profile');
 
-        $qb->where('profiles.authority = :profile');
-        $qb->orWhere('profiles.profile = :profile');
+        $dbal->setParameter('profile', $profile, UserProfileUid::TYPE);
 
-        $qb->setParameter('profile', $profile, UserProfileUid::TYPE);
-
-        $qb->join(
+        $dbal->join(
             'profiles',
-            UserProfile::TABLE,
+            UserProfile::class,
             'profile',
             'profile.id = profiles.profile');
 
 
-        $qb->join(
-            'profiles',
-            UserProfileInfo::TABLE,
-            'info',
-            'info.profile = profiles.profile AND info.status = :status')
-            ->setParameter('status', new UserProfileStatus(UserProfileStatusActive::class), UserProfileStatus::TYPE);
+        $dbal
+            ->join(
+                'profiles',
+                UserProfileInfo::class,
+                'info',
+                'info.profile = profiles.profile AND info.status = :status'
+            )
+            ->setParameter(
+                'status',
+                new UserProfileStatus(UserProfileStatusActive::class),
+                UserProfileStatus::TYPE
+            );
 
 
-        $qb->leftJoin(
+        $dbal->leftJoin(
             'profile',
-            UserProfilePersonal::TABLE,
+            UserProfilePersonal::class,
             'personal',
             'personal.event = profile.event');
 
 
-        $qb->join(
+        $dbal->join(
             'info',
-            Account::TABLE,
+            Account::class,
             'account',
             'account.id = info.usr');
 
-        $qb->join(
-            'account',
-            AccountStatus::TABLE,
-            'status',
-            'status.event = account.event AND status.status = :account_status')
+        $dbal
+            ->join(
+                'account',
+                AccountStatus::class,
+                'status',
+                'status.event = account.event AND status.status = :account_status')
+            ->setParameter(
+                'account_status',
+                new EmailStatus(EmailStatusActive::class),
+                EmailStatus::TYPE
+            );
 
-        ->setParameter('account_status', new EmailStatus(EmailStatusActive::class), EmailStatus::TYPE);
+
+        $dbal->allGroupByExclude();
 
 
-        $qb->allGroupByExclude();
+        /** Свойства конструктора объекта гидрации */
+        $dbal->select('profiles.profile AS value');
+        $dbal->addSelect('personal.username AS attr');
 
-        return $qb
+        return $dbal
             // ->enableCache('Namespace', 3600)
             ->fetchAllHydrate(UserProfileUid::class);
     }

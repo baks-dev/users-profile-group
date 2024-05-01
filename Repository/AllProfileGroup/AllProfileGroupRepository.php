@@ -49,61 +49,73 @@ final class AllProfileGroupRepository implements AllProfileGroupInterface
         $this->DBALQueryBuilder = $DBALQueryBuilder;
     }
 
+
+    private ?SearchDTO $search = null;
+
+    public function search(SearchDTO $search): self
+    {
+        $this->search = $search;
+        return $this;
+    }
+
+
     /** Метод возвращает пагинатор ProfileGroup */
     public function fetchAllProfileGroupAssociative(
-        SearchDTO $search,
         ?UserProfileUid $profile
     ): PaginatorInterface
     {
-        
-        $qb = $this->DBALQueryBuilder
+
+        $dbal = $this->DBALQueryBuilder
             ->createQueryBuilder(self::class)
             ->bindLocal();
 
-        $qb->addSelect('profile_group.event');
-        $qb->from(ProfileGroup::TABLE, 'profile_group');
+        $dbal->addSelect('profile_group.event');
+        $dbal->from(ProfileGroup::class, 'profile_group');
 
         if($profile)
         {
-            $qb->where('profile_group.profile = :profile')
+            $dbal->where('profile_group.profile = :profile')
                 ->setParameter('profile', $profile, UserProfileUid::TYPE);
         }
 
-        $qb->addSelect('trans.name');
-        $qb->leftJoin(
-            'profile_group',
-            ProfileGroupTranslate::TABLE,
-            'trans',
-            'trans.event = profile_group.event AND trans.local = :local'
-        );
+        $dbal
+            ->addSelect('trans.name')
+            ->leftJoin(
+                'profile_group',
+                ProfileGroupTranslate::class,
+                'trans',
+                'trans.event = profile_group.event AND trans.local = :local'
+            );
 
 
         /** Ответственное лицо (Профиль пользователя) */
 
-        $qb->addSelect('users_profile.id as users_profile_id');
-        $qb->leftJoin(
-            'profile_group',
-            UserProfile::TABLE,
-            'users_profile',
-            'users_profile.id = profile_group.profile'
-        );
+        $dbal
+            ->addSelect('users_profile.id as users_profile_id')
+            ->leftJoin(
+                'profile_group',
+                UserProfile::class,
+                'users_profile',
+                'users_profile.id = profile_group.profile'
+            );
 
-        $qb->addSelect('users_profile_personal.username AS users_profile_username');
-        $qb->leftJoin(
-            'users_profile',
-            UserProfilePersonal::TABLE,
-            'users_profile_personal',
-            'users_profile_personal.event = users_profile.event'
-        );
+        $dbal
+            ->addSelect('users_profile_personal.username AS users_profile_username')
+            ->leftJoin(
+                'users_profile',
+                UserProfilePersonal::class,
+                'users_profile_personal',
+                'users_profile_personal.event = users_profile.event'
+            );
 
         /* Поиск */
-        if($search->getQuery())
+        if($this->search?->getQuery())
         {
             $this->DBALQueryBuilder
-                ->createSearchQueryBuilder($search)
+                ->createSearchQueryBuilder($this->search)
                 ->addSearchLike('trans.name');
         }
 
-        return $this->paginator->fetchAllAssociative($qb);
+        return $this->paginator->fetchAllAssociative($dbal);
     }
 }

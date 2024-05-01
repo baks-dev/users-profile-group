@@ -46,7 +46,7 @@ final class ExistProfileGroupRepository implements ExistProfileGroupInterface
         $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
         $qb
-            ->from(ProfileGroupUsers::TABLE, 'usr')
+            ->from(ProfileGroupUsers::class, 'usr')
             ->where('usr.profile = :profile')
             ->setParameter('profile', $profile, UserProfileUid::TYPE);
 

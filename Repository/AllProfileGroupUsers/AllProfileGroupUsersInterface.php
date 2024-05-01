@@ -29,9 +29,10 @@ use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 interface AllProfileGroupUsersInterface
 {
+    public function search(SearchDTO $search): self;
+
     /** Метод возвращает пагинатор ProfileGroupUsers */
     public function fetchAllProfileGroupUsersAssociative(
-        SearchDTO $search,
         ?UserProfileUid $profile
     ): PaginatorInterface;
 }

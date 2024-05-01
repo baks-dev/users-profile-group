@@ -50,26 +50,27 @@ final class ProfileGroupByUserProfileRepository implements ProfileGroupByUserPro
         UserProfileUid|bool|null $authority = null // доверенность
     ): ?GroupPrefix
     {
-        $qb = $this->DBALQueryBuilder->createQueryBuilder(self::class);
+        $dbal = $this->DBALQueryBuilder->createQueryBuilder(self::class);
 
-        $qb->select('groups.prefix');
-        $qb->from(ProfileGroupUsers::TABLE, 'groups')
+        $dbal
+            ->select('groups.prefix')
+            ->from(ProfileGroupUsers::class, 'groups')
             ->where('groups.profile = :profile')
             ->setParameter('profile', $profile, UserProfileUid::TYPE);
 
         /** Если доверительная группа */
         if($authority)
         {
-            $qb->andWhere('groups.authority = :authority')
+            $dbal->andWhere('groups.authority = :authority')
                 ->setParameter('authority', $authority, UserProfileUid::TYPE);
         }
 
         if($authority === null)
         {
-            $qb->andWhere('groups.authority IS NULL');
+            $dbal->andWhere('groups.authority IS NULL');
         }
 
-        $group = $qb
+        $group = $dbal
             ->enableCache('users-profile-group', 3600)
             ->fetchOne();
 
