@@ -113,12 +113,11 @@ final class UserProfileChoiceRepository implements UserProfileChoiceInterface
             );
 
 
-        $dbal->allGroupByExclude();
-
-
         /** Свойства конструктора объекта гидрации */
         $dbal->select('profiles.profile AS value');
         $dbal->addSelect('personal.username AS attr');
+
+        $dbal->allGroupByExclude();
 
         return $dbal
             // ->enableCache('Namespace', 3600)
