@@ -1,6 +1,7 @@
 # Role
 
 ROLE_PROFILE_GROUP:
+  header: 'Groups'
   name: 'User groups'
   desc: 'User groups and their access roles'
 
