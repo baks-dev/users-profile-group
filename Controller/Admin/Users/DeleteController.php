@@ -84,6 +84,8 @@ final class DeleteController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid() && $form->has('profile_group_users_delete'))
         {
+            $this->refreshTokenForm($form);
+
             $ProfileGroupUsers = $ProfileGroupUsersDeleteHandler->handle($ProfileGroupUsersDeleteDTO, !$this->getAdminFilterProfile());
 
             if($ProfileGroupUsers instanceof ProfileGroupUsers)

@@ -76,6 +76,8 @@ final class AddController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid() && $form->has('profile_group_users'))
         {
+            $this->refreshTokenForm($form);
+
             if($isAdminProfile)
             {
                 $ProfileGroupUsersDTO->setAuthority($isAdminProfile);

@@ -56,6 +56,8 @@ final class NewController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid() && $form->has('profile_group'))
         {
+            $this->refreshTokenForm($form);
+
             $ProfileGroup = $ProfileGroupHandler->handle($ProfileGroupDTO);
 
             if($ProfileGroup instanceof ProfileGroup)

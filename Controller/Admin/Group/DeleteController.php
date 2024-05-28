@@ -61,6 +61,8 @@ final class DeleteController extends AbstractController
 
         if($form->isSubmitted() && $form->isValid() && $form->has('profile_group_delete'))
         {
+            $this->refreshTokenForm($form);
+
             $ProfileGroup = $ProfileGroupDeleteHandler->handle($ProfileGroupDeleteDTO);
 
             if($ProfileGroup instanceof ProfileGroup)
