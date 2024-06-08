@@ -2,6 +2,7 @@
 
 namespace Symfony\Component\DependencyInjection\Loader\Configurator;
 
+use BaksDev\Users\Profile\Group\BaksDevUsersProfileGroupBundle;
 use BaksDev\Users\Profile\Group\Type\Event\ProfileGroupEventType;
 use BaksDev\Users\Profile\Group\Type\Event\ProfileGroupEventUid;
 use BaksDev\Users\Profile\Group\Type\Id\ProfileRoleType;
@@ -27,11 +28,10 @@ return static function(DoctrineConfig $doctrine) {
 
     $emDefault = $doctrine->orm()->entityManager('default')->autoMapping(true);
 
-    $MODULE = substr(__DIR__, 0, strpos(__DIR__, "Resources"));
 
     $emDefault->mapping('users-profile-group')
 		->type('attribute')
-		->dir($MODULE.'Entity')
+		->dir(BaksDevUsersProfileGroupBundle::PATH.'Entity')
 		->isBundle(false)
 		->prefix('BaksDev\Users\Profile\Group\Entity')
 		->alias('users-profile-group')
