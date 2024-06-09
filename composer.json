@@ -22,7 +22,9 @@
     }
   ],
   "require": {
-    "php": ">=8.3"
+    "php": ">=8.3",
+    "users-profile-type": "^7.1",
+    "users-profile-user": "^7.1"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
