@@ -22,10 +22,7 @@
     }
   ],
   "require": {
-    "php": ">=8.3",
-    "baks-dev/users-profile-type": "^7.1",
-    "baks-dev/users-profile-user": "^7.1",
-    "baks-dev/auth-email": "^7.1"
+    "php": ">=8.3"
   },
   "require-dev": {
     "roave/security-advisories": "dev-latest",
