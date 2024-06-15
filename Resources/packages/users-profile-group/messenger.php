@@ -26,8 +26,8 @@ return static function (FrameworkConfig $framework) {
 
     $messenger
         ->transport('users-profile-group')
-        ->dsn('%env(MESSENGER_TRANSPORT_DSN)%')
-        ->options(['queue_name' => 'users-profile-group'])
+        ->dsn('redis://%env(REDIS_PASSWORD)%@%env(REDIS_HOST)%:%env(REDIS_PORT)%?auto_setup=true')
+        ->options(['stream' => 'users-profile-group'])
         ->failureTransport('failed-users-profile-group')
         ->retryStrategy()
         ->maxRetries(3)
@@ -38,7 +38,9 @@ return static function (FrameworkConfig $framework) {
 
     ;
 
-    $messenger->transport('failed-users-profile-group')
+    $failure = $framework->messenger();
+
+    $failure->transport('failed-users-profile-group')
         ->dsn('%env(MESSENGER_TRANSPORT_DSN)%')
         ->options(['queue_name' => 'failed-users-profile-group'])
     ;
