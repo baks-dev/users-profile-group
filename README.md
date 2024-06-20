@@ -17,7 +17,6 @@ $ composer require baks-dev/users-profile-group
 
 ``` bash
 php bin/console \
-baks:users-profile-type:user \
 baks:auth-email:admin \ 
 baks:users-profile-user:admin \
 baks:users-profile-group:admin
