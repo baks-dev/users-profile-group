@@ -16,9 +16,10 @@ $ composer require baks-dev/users-profile-group
 Добавляем Администратора ресурса
 
 ``` bash
-$ php bin/console baks:auth-email:admin
-$ php bin/console baks:users-profile-user:admin
-$ php bin/console baks:users-profile-group:admin
+php bin/console baks:users-profile-type:user
+php bin/console baks:auth-email:admin
+php bin/console baks:users-profile-user:admin
+php bin/console baks:users-profile-group:admin
 ```
 
 ## Дополнительно
@@ -26,7 +27,7 @@ $ php bin/console baks:users-profile-group:admin
 Установка конфигурации и файловых ресурсов:
 
 ``` bash
-$ php bin/console baks:assets:install
+php bin/console baks:assets:install
 ```
 
 Рекомендуется в composer.json проекта добавить в секцию автоматическое выполнение
@@ -49,14 +50,14 @@ $ php bin/console baks:assets:install
 Изменения в схеме базы данных с помощью миграции
 
 ``` bash
-$ php bin/console doctrine:migrations:diff
-$ php bin/console doctrine:migrations:migrate
+php bin/console doctrine:migrations:diff
+php bin/console doctrine:migrations:migrate
 ```
 
 ## Тестирование
 
 ``` bash
-$ php bin/phpunit --group=users-profile-group
+php bin/phpunit --group=users-profile-group
 ```
 
 ## Лицензия ![License](https://img.shields.io/badge/MIT-green)
