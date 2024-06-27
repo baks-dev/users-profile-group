@@ -41,14 +41,8 @@ use Generator;
 
 final class UserProfileChoiceRepository implements UserProfileChoiceInterface
 {
-    private DBALQueryBuilder $DBALQueryBuilder;
 
-    public function __construct(
-        DBALQueryBuilder $DBALQueryBuilder,
-    )
-    {
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
-    }
+    public function __construct(private readonly DBALQueryBuilder $DBALQueryBuilder) {}
 
 
     /**
@@ -70,7 +64,8 @@ final class UserProfileChoiceRepository implements UserProfileChoiceInterface
             'profiles',
             UserProfile::class,
             'profile',
-            'profile.id = profiles.profile');
+            'profile.id = profiles.profile'
+        );
 
 
         $dbal
@@ -82,7 +77,7 @@ final class UserProfileChoiceRepository implements UserProfileChoiceInterface
             )
             ->setParameter(
                 'status',
-                new UserProfileStatus(UserProfileStatusActive::class),
+                UserProfileStatusActive::class,
                 UserProfileStatus::TYPE
             );
 
@@ -91,21 +86,24 @@ final class UserProfileChoiceRepository implements UserProfileChoiceInterface
             'profile',
             UserProfilePersonal::class,
             'personal',
-            'personal.event = profile.event');
+            'personal.event = profile.event'
+        );
 
 
         $dbal->join(
             'info',
             Account::class,
             'account',
-            'account.id = info.usr');
+            'account.id = info.usr'
+        );
 
         $dbal
             ->join(
                 'account',
                 AccountStatus::class,
                 'status',
-                'status.event = account.event AND status.status = :account_status')
+                'status.event = account.event AND status.status = :account_status'
+            )
             ->setParameter(
                 'account_status',
                 new EmailStatus(EmailStatusActive::class),
