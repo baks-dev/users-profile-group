@@ -16,6 +16,7 @@ $ composer require baks-dev/users-profile-group
 Добавляем Администратора ресурса
 
 ``` bash
+php bin/console baks:users-profile-type:user
 php bin/console baks:auth-email:admin
 php bin/console baks:users-profile-user:admin
 php bin/console baks:users-profile-group:admin
