@@ -30,7 +30,7 @@ use BaksDev\Users\Profile\Group\Security\RoleInterface;
 use BaksDev\Users\Profile\Group\Security\VoterInterface;
 use BaksDev\Users\Profile\Group\Type\Prefix\Role\GroupRolePrefix;
 use BaksDev\Users\Profile\Group\Type\Prefix\Voter\RoleVoterPrefix;
-use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -48,8 +48,8 @@ final class ProfileGroupForm extends AbstractType
     private AuthorizationCheckerInterface $authorization;
 
     public function __construct(
-        #[TaggedIterator('baks.security.role')] iterable $roles,
-        #[TaggedIterator('baks.security.voter')] iterable $voters,
+        #[AutowireIterator('baks.security.role')] iterable $roles,
+        #[AutowireIterator('baks.security.voter')] iterable $voters,
         AuthorizationCheckerInterface $authorization,
     )
     {
