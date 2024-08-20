@@ -101,7 +101,7 @@ final class SwitchUserProvider implements UserProviderInterface
 
         /** Получаем пользователя, в которого авторизуемся  */
         $user = $this->userByUserProfile
-            ->withProfile($authority)
+            ->forProfile($authority)
             ->findUser();
 
         if(!$user)
