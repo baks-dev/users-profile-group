@@ -2,13 +2,13 @@
 {% extends Template('/admin/base.html.twig') %}
 
 {% block stylesheets %}
-	<link href="/assets/plugins/nice-select2/nice-select2.min.css" rel="stylesheet">
+    <link href="/assets/plugins/nice-select2/nice-select2.min.css" rel="stylesheet">
 {% endblock %}
 
 
 {# ---- КОНТЕНТ-БЛОК ------------------------------------------------------------ #}
 {% block content %}
-	{{ include(_self|replace({ "template.html.twig": baks_settings.device~"/content.html.twig" })) }}
+    {{ include(_self|replace({ "template.html.twig": baks_settings.device~"/content.html.twig" })) }}
 {% endblock %}
 
 

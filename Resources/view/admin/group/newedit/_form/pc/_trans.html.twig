@@ -1,63 +1,63 @@
 {% trans_default_domain 'admin.profile.group' %}
 
 <div class="card w-100 border-light mb-3">
-	
-	<div class="card-header border-light bg-body">
-		<div class="card-title">
-			<h4>
 
-				{{ 'admin.form.locale.label'|trans }}
-			</h4>
-		</div>
-	</div>
-	
-	<div class="card-body pb-0">
-		
-		
-		{% if form.translate.count > 1 %}
-			
-			<ul class="nav nav-pills gap-3 mb-3" id="nav-{{ form.translate.vars.id }}" role="tablist">
-				{% for translate in form.translate %}
-					<li class="nav-item" role="presentation">
-						
-						<button class="btn fw-bolder nav-link{{ app.request.locale == translate.vars.value.local? ' active' : '' }}"
-								data-bs-toggle="tab"
-								type="button"
-								role="tab"
-								aria-selected="true"
-								
-								id="nav-{{ form.translate.vars.id }}-{{ translate.vars.value.local }}-tab"
-								data-bs-target="#nav-{{ form.translate.vars.id }}-{{ translate.vars.value.local }}"
-						>
-							<small class="text-uppercase px-3">{{ translate.vars.value.local|trans({}, 'core') }}</small>
-						</button>
+    <div class="card-header border-light bg-body">
+        <div class="card-title">
+            <h4>
 
-					</li>
-				
-				{% endfor %}
-			</ul>
-		
-		{% endif %}
-		
-		<div class="tab-content" id="nav-{{ form.translate.vars.id }}Content">
-			
-			{% for translate in form.translate %}
-				
-				<div class="tab-pane fade{{ app.request.locale == translate.vars.value.local? ' show active' : '' }}"
-						role="tabpanel"
-						id="nav-{{ form.translate.vars.id }}-{{ translate.vars.value.local }}"
-				>
+                {{ 'admin.form.locale.label'|trans }}
+            </h4>
+        </div>
+    </div>
 
-					{# Название группы #}
-					{{ form_row(translate.name, {
-						label : 'admin.form.locale.name'|trans, attr: { 'data-lang' : "product_form_trans_"~translate.vars.value.local  }
-					}) }}
+    <div class="card-body pb-0">
 
-				</div>
-			{% endfor %}
-		
-		</div>
-	</div>
+
+        {% if form.translate.count > 1 %}
+
+            <ul class="nav nav-pills gap-3 mb-3" id="nav-{{ form.translate.vars.id }}" role="tablist">
+                {% for translate in form.translate %}
+                    <li class="nav-item" role="presentation">
+
+                        <button class="btn fw-bolder nav-link{{ app.request.locale == translate.vars.value.local? ' active' : '' }}"
+                                data-bs-toggle="tab"
+                                type="button"
+                                role="tab"
+                                aria-selected="true"
+
+                                id="nav-{{ form.translate.vars.id }}-{{ translate.vars.value.local }}-tab"
+                                data-bs-target="#nav-{{ form.translate.vars.id }}-{{ translate.vars.value.local }}"
+                        >
+                            <small class="text-uppercase px-3">{{ translate.vars.value.local|trans({}, 'core') }}</small>
+                        </button>
+
+                    </li>
+
+                {% endfor %}
+            </ul>
+
+        {% endif %}
+
+        <div class="tab-content" id="nav-{{ form.translate.vars.id }}Content">
+
+            {% for translate in form.translate %}
+
+                <div class="tab-pane fade{{ app.request.locale == translate.vars.value.local? ' show active' : '' }}"
+                     role="tabpanel"
+                     id="nav-{{ form.translate.vars.id }}-{{ translate.vars.value.local }}"
+                >
+
+                    {# Название группы #}
+                    {{ form_row(translate.name, {
+                        label : 'admin.form.locale.name'|trans, attr: { 'data-lang' : "product_form_trans_"~translate.vars.value.local  }
+                    }) }}
+
+                </div>
+            {% endfor %}
+
+        </div>
+    </div>
 </div>
 
 
