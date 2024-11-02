@@ -10,7 +10,7 @@
 # systemctl stop baks-users-profile-group@1.service
 
 [Unit]
-Description=Symfony messenger users-profile-group %i
+Description=users-profile-group
 StartLimitBurst=5
 StartLimitIntervalSec=0
 
