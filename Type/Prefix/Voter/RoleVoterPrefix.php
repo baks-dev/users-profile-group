@@ -29,9 +29,9 @@ use function mb_strtoupper;
 
 final class RoleVoterPrefix
 {
-    public const TYPE = 'prefix_voter';
+    public const string TYPE = 'prefix_voter';
 
-    public const TEST = 'ROLE_VOTER_TEST';
+    public const string TEST = 'ROLE_VOTER_TEST';
 
     private $value;
 

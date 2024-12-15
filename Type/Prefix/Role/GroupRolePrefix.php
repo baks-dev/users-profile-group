@@ -28,9 +28,9 @@ use InvalidArgumentException;
 
 final class GroupRolePrefix
 {
-    public const TYPE = 'prefix_role';
+    public const string TYPE = 'prefix_role';
 
-    public const TEST = 'ROLE_PREFIX_TEST';
+    public const string TEST = 'ROLE_PREFIX_TEST';
 
     private $value;
 

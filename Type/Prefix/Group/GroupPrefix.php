@@ -29,9 +29,9 @@ use function mb_strtoupper;
 
 final class GroupPrefix
 {
-    public const TYPE = 'prefix_group';
+    public const string TYPE = 'prefix_group';
 
-    public const TEST = 'ROLE_GROUP_TEST';
+    public const string TEST = 'ROLE_GROUP_TEST';
 
     private string $value;
     /**
