@@ -24,6 +24,7 @@ admin:
     edit: '%s: Error updating role group'
     delete: '%s: Error deleting role group'
     restore: '%s: Error restoring role group'
+    email: 'The user profile with the specified email was not found'
 
   form:
     locale:

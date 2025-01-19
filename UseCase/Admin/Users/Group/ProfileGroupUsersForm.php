@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -28,9 +28,9 @@ namespace BaksDev\Users\Profile\Group\UseCase\Admin\Users\Group;
 
 use BaksDev\Users\Profile\Group\Repository\ProfileGroupsChoice\ProfileGroupsChoiceInterface;
 use BaksDev\Users\Profile\Group\Type\Prefix\Group\GroupPrefix;
+use BaksDev\Users\Profile\UserProfile\Repository\UserProfileTokenStorage\UserProfileTokenStorageInterface;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use BaksDev\Users\User\Entity\User;
-use InvalidArgumentException;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -55,6 +55,8 @@ final class ProfileGroupUsersForm extends AbstractType
         AuthorizationCheckerInterface $authorizationChecker,
         TokenStorageInterface $tokenStorage,
         ProfileGroupsChoiceInterface $profileGroupsChoice,
+
+        private readonly UserProfileTokenStorageInterface $userProfileTokenStorage,
     )
     {
         $this->authorizationChecker = $authorizationChecker;
@@ -67,20 +69,24 @@ final class ProfileGroupUsersForm extends AbstractType
     {
 
 
-        /** @var User $usr */
-        $usr = $this->tokenStorage->getToken()?->getUser();
+        //        /** @var User $usr */
+        //        $usr = $this->tokenStorage->getToken()?->getUser();
+        //
+        //        if(!$usr)
+        //        {
+        //            throw new InvalidArgumentException('User not found');
+        //        }
+        //
+        //        $profile = $usr->getProfile();
+        //
+        //        if(!$profile)
+        //        {
+        //            throw new InvalidArgumentException('Profile not found');
+        //        }
 
-        if(!$usr)
-        {
-            throw new InvalidArgumentException('User not found');
-        }
+        //$usr =  $this->userProfileTokenStorage->getUser();
 
-        $profile = $usr->getProfile();
-
-        if(!$profile)
-        {
-            throw new InvalidArgumentException('Profile not found');
-        }
+        $profile = $this->userProfileTokenStorage->getProfile();
 
 
         $builder
@@ -117,16 +123,16 @@ final class ProfileGroupUsersForm extends AbstractType
         });
 
 
-        $builder->get('profile')->addModelTransformer(
-            new CallbackTransformer(
-                function($profile) {
-                    return (string) $profile;
-                },
-                function($profile) {
-                    return new UserProfileUid($profile);
-                }
-            )
-        );
+        //        $builder->get('profile')->addModelTransformer(
+        //            new CallbackTransformer(
+        //                function($profile) {
+        //                    return (string) $profile;
+        //                },
+        //                function($profile) {
+        //                    return new UserProfileUid($profile);
+        //                }
+        //            )
+        //        );
 
 
         /* Сохранить ******************************************************/

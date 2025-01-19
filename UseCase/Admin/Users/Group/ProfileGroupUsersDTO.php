@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,8 @@ declare(strict_types=1);
 
 namespace BaksDev\Users\Profile\Group\UseCase\Admin\Users\Group;
 
+use BaksDev\Auth\Email\Type\Email\AccountEmail;
+use BaksDev\Core\Type\UidType\Uid;
 use BaksDev\Users\Profile\Group\Entity\Users\ProfileGroupUsersInterface;
 use BaksDev\Users\Profile\Group\Type\Prefix\Group\GroupPrefix;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
@@ -44,9 +46,14 @@ final class ProfileGroupUsersDTO implements ProfileGroupUsersInterface
     /**
      * Профиль пользователя в группе
      */
-    #[Assert\NotBlank]
-    private readonly UserProfileUid $profile;
+    #[Assert\Uuid]
+    private UserProfileUid $profile;
 
+    /**
+     * Профиль пользователя в группе
+     */
+    #[Assert\Email]
+    private ?AccountEmail $email = null;
 
     /**
      * Доверенность профиля пользователя
@@ -67,12 +74,12 @@ final class ProfileGroupUsersDTO implements ProfileGroupUsersInterface
         return $this;
     }
 
+
     /**
      * Профиль пользователя в группе
      */
     public function getProfile(): ?UserProfileUid
     {
-
         if(!(new ReflectionProperty(self::class, 'profile'))->isInitialized($this))
         {
             return null;
@@ -81,15 +88,48 @@ final class ProfileGroupUsersDTO implements ProfileGroupUsersInterface
         return $this->profile;
     }
 
-    public function setProfile(UserProfileUid $profile): self
+    public function setProfile(UserProfileUid|AccountEmail|string $profile): self
     {
+
+
         if(!(new ReflectionProperty(self::class, 'profile'))->isInitialized($this))
         {
-            $this->profile = $profile;
+            if(is_string($profile))
+            {
+                if(Uid::isUid($profile))
+                {
+                    $profile = new UserProfileUid($profile);
+                }
+
+                if(filter_var($profile, FILTER_VALIDATE_EMAIL))
+                {
+                    $profile = new AccountEmail($profile);
+                }
+            }
+
+            if($profile instanceof UserProfileUid)
+            {
+                $this->profile = $profile;
+            }
+
+            if($profile instanceof AccountEmail)
+            {
+                $this->email = $profile;
+            }
         }
 
         return $this;
     }
+
+    /**
+     * Email
+     */
+    public function getEmail(): ?AccountEmail
+    {
+        return $this->email;
+    }
+
+
 
     /**
      * Доверенность профиля пользователя
