@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -37,20 +37,14 @@ use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 final class AllProfileGroupRepository implements AllProfileGroupInterface
 {
-    private PaginatorInterface $paginator;
-    private DBALQueryBuilder $DBALQueryBuilder;
-
-    public function __construct(
-        DBALQueryBuilder $DBALQueryBuilder,
-        PaginatorInterface $paginator,
-    )
-    {
-        $this->paginator = $paginator;
-        $this->DBALQueryBuilder = $DBALQueryBuilder;
-    }
-
+    private UserProfileUid|false $profile;
 
     private ?SearchDTO $search = null;
+
+    public function __construct(
+        private readonly DBALQueryBuilder $DBALQueryBuilder,
+        private readonly PaginatorInterface $paginator,
+    ) {}
 
     public function search(SearchDTO $search): self
     {
@@ -58,11 +52,25 @@ final class AllProfileGroupRepository implements AllProfileGroupInterface
         return $this;
     }
 
+    public function profile(UserProfile|UserProfileUid|string $profile): self
+    {
+        if(is_string($profile))
+        {
+            $profile = new UserProfileUid($profile);
+        }
+
+        if($profile instanceof UserProfile)
+        {
+            $profile = $profile->getId();
+        }
+
+        $this->profile = $profile;
+
+        return $this;
+    }
 
     /** Метод возвращает пагинатор ProfileGroup */
-    public function fetchAllProfileGroupAssociative(
-        ?UserProfileUid $profile
-    ): PaginatorInterface
+    public function findPaginator(): PaginatorInterface
     {
 
         $dbal = $this->DBALQueryBuilder
@@ -72,10 +80,10 @@ final class AllProfileGroupRepository implements AllProfileGroupInterface
         $dbal->addSelect('profile_group.event');
         $dbal->from(ProfileGroup::class, 'profile_group');
 
-        if($profile)
+        if($this->profile)
         {
             $dbal->where('profile_group.profile = :profile')
-                ->setParameter('profile', $profile, UserProfileUid::TYPE);
+                ->setParameter('profile', $this->profile, UserProfileUid::TYPE);
         }
 
         $dbal

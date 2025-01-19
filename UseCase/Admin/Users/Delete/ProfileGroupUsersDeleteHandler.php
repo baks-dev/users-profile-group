@@ -78,7 +78,7 @@ final class ProfileGroupUsersDeleteHandler
         $findOneBy['prefix'] = $command->getPrefix();
         $findOneBy['profile'] = $command->getProfile();
 
-        if(!$isAdmin)
+        if($isAdmin === false)
         {
             $findOneBy['authority'] = $command->getAuthority();
         }

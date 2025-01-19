@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -55,19 +55,15 @@ final class IndexController extends AbstractController
         $searchForm->handleRequest($request);
 
 
-        // Фильтр
-        // $filter = new ProductsStocksFilterDTO($request, $ROLE_ADMIN ? null : $this->getProfileUid());
-        // $filterForm = $this->createForm(ProductsStocksFilterForm::class, $filter);
-        // $filterForm->handleRequest($request);
+        $this->isAdmin() ?: $allProfileGroup->profile($this->getProfileUid());
 
-        return $this->render(
-            [
-                'query' => $allProfileGroup
-                    ->search($search)
-                    ->fetchAllProfileGroupAssociative($this->getAdminFilterProfile()),
+        $ProfileGroups = $allProfileGroup
+            ->search($search)
+            ->findPaginator();
 
-                'search' => $searchForm->createView(),
-            ]
-        );
+        return $this->render([
+            'query' => $ProfileGroups,
+            'search' => $searchForm->createView(),
+        ]);
     }
 }
