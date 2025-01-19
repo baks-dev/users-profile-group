@@ -37,7 +37,7 @@ use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 
 final class AllProfileGroupRepository implements AllProfileGroupInterface
 {
-    private UserProfileUid|false $profile;
+    private UserProfileUid|false $profile = false;
 
     private ?SearchDTO $search = null;
 
