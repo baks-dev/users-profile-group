@@ -31,31 +31,17 @@ use BaksDev\Users\Profile\Group\Entity\Users\ProfileGroupUsers;
 use BaksDev\Users\Profile\Group\Messenger\ProfileGroupMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final class ProfileGroupUsersDeleteHandler
+final readonly class ProfileGroupUsersDeleteHandler
 {
-    private EntityManagerInterface $entityManager;
-
-    private ValidatorInterface $validator;
-
-    private LoggerInterface $logger;
-
-    private MessageDispatchInterface $messageDispatch;
-
     public function __construct(
+        #[Target('usersProfileGroupLogger')] private LoggerInterface $logger,
         EntityManagerInterface $entityManager,
         ValidatorInterface $validator,
-        LoggerInterface $logger,
         MessageDispatchInterface $messageDispatch
-    )
-    {
-        $this->entityManager = $entityManager;
-        $this->validator = $validator;
-        $this->logger = $logger;
-        $this->messageDispatch = $messageDispatch;
-
-    }
+    ) {}
 
     /** @see ProfileGroupUsers */
     public function handle(ProfileGroupUsersDeleteDTO $command, bool $isAdmin): string|ProfileGroupUsers
@@ -109,9 +95,9 @@ final class ProfileGroupUsersDeleteHandler
             ->messageDispatch
             ->addClearCacheOther('users-profile-group')
             ->dispatch(
-            message: new ProfileGroupMessage($ProfileGroupUsers->getPrefix()),
-            transport: 'profile-group-users'
-        );
+                message: new ProfileGroupMessage($ProfileGroupUsers->getPrefix()),
+                transport: 'profile-group-users'
+            );
 
         // 'profile-group-users_high'
         return $ProfileGroupUsers;
