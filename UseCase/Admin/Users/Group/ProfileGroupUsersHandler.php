@@ -38,15 +38,13 @@ final readonly class ProfileGroupUsersHandler
 {
     public function __construct(
         #[Target('usersProfileGroupLogger')] private LoggerInterface $logger,
-        EntityManagerInterface $entityManager,
-        ValidatorInterface $validator,
-        MessageDispatchInterface $messageDispatch
+        private EntityManagerInterface $entityManager,
+        private ValidatorInterface $validator,
+        private MessageDispatchInterface $messageDispatch
     ) {}
 
     /** @see ProfileGroupUsers */
-    public function handle(
-        ProfileGroupUsersDTO $command,
-    ): string|ProfileGroupUsers
+    public function handle(ProfileGroupUsersDTO $command): string|ProfileGroupUsers
     {
         /**
          *  Валидация ProfileGroupUsersDTO
