@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -33,9 +33,9 @@ use Symfony\Component\DependencyInjection\Attribute\When;
 #[When(env: 'test')]
 final class IndexControllerTest extends WebTestCase
 {
-    private const URL = '/admin/profile/groups';
+    private const string URL = '/admin/profile/groups';
 
-    private const ROLE = 'ROLE_PROFILE_GROUP';
+    private const string ROLE = 'ROLE_PROFILE_GROUP';
 
     /** Доступ по роли */
     public function testRoleSuccessful(): void
