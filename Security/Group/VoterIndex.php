@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -33,7 +33,7 @@ use Symfony\Component\DependencyInjection\Attribute\AutoconfigureTag;
 final class VoterIndex implements VoterInterface
 {
 
-    public const VOTER = 'INDEX';
+    public const string VOTER = 'INDEX';
 
     public static function getVoter(): string
     {
