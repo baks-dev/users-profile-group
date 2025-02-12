@@ -104,6 +104,26 @@ final class AllProfileGroupUsersRepository implements AllProfileGroupUsersInterf
             );
 
 
+        /** Профиль создателя группы */
+
+        // UserProfile
+        $dbal->leftJoin(
+            'groups',
+            UserProfile::class,
+            'group_profile',
+            'group_profile.id = groups.profile'
+        );
+
+        $dbal
+            ->addSelect('group_profile_personal.username AS group_profile_username')
+            ->leftJoin(
+                'group_profile',
+                UserProfilePersonal::class,
+                'group_profile_personal',
+                'group_profile_personal.event = group_profile.event'
+            );
+
+
         if($this->profile)
         {
             $dbal->where('users.authority = :profile')
@@ -122,24 +142,25 @@ final class AllProfileGroupUsersRepository implements AllProfileGroupUsersInterf
         );
 
 
-        $dbal->addSelect('users_profile_info.usr AS usr');
-        $dbal->leftJoin(
-            'users',
-            UserProfileInfo::class,
-            'users_profile_info',
-            'users_profile_info.profile = users.profile'
-        );
+        $dbal
+            ->addSelect('users_profile_info.usr AS usr')
+            ->leftJoin(
+                'users',
+                UserProfileInfo::class,
+                'users_profile_info',
+                'users_profile_info.profile = users.profile'
+            );
 
 
         // Personal
-        $dbal->addSelect('users_profile_personal.username AS users_profile_username');
-
-        $dbal->leftJoin(
-            'users_profile',
-            UserProfilePersonal::class,
-            'users_profile_personal',
-            'users_profile_personal.event = users_profile.event'
-        );
+        $dbal
+            ->addSelect('users_profile_personal.username AS users_profile_username')
+            ->leftJoin(
+                'users_profile',
+                UserProfilePersonal::class,
+                'users_profile_personal',
+                'users_profile_personal.event = users_profile.event'
+            );
 
         // Avatar
         $dbal

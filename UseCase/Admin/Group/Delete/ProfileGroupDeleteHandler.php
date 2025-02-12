@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -30,27 +30,15 @@ use BaksDev\Core\Entity\AbstractHandler;
 use BaksDev\Users\Profile\Group\Entity\Event\ProfileGroupEvent;
 use BaksDev\Users\Profile\Group\Entity\ProfileGroup;
 use BaksDev\Users\Profile\Group\Messenger\ProfileGroupMessage;
-use DomainException;
 
 final class ProfileGroupDeleteHandler extends AbstractHandler
 {
     public function handle(ProfileGroupDeleteDTO $command): string|ProfileGroup
     {
-        /** Валидация WbSupplyNewDTO  */
-        $this->validatorCollection->add($command);
 
-        $this->main = new ProfileGroup($command->getProfile());
-        $this->event = new ProfileGroupEvent();
-
-
-        try
-        {
-            $this->preRemove($command);
-        }
-        catch(DomainException $errorUniqid)
-        {
-            return $errorUniqid->getMessage();
-        }
+        $this
+            ->setCommand($command)
+            ->preEventRemove(new ProfileGroup($command->getProfile()), ProfileGroupEvent::class);
 
         /** Валидация всех объектов */
         if($this->validatorCollection->isInvalid())
@@ -58,13 +46,15 @@ final class ProfileGroupDeleteHandler extends AbstractHandler
             return $this->validatorCollection->getErrorUniqid();
         }
 
-        $this->entityManager->flush();
+        $this->flush();
 
         /* Отправляем сообщение в шину */
-        $this->messageDispatch->dispatch(
-            message: new ProfileGroupMessage($this->main->getPrefix()),
-            transport: 'users-profile-group'
-        );
+        $this->messageDispatch
+            ->addClearCacheOther('profile-group-users')
+            ->dispatch(
+                message: new ProfileGroupMessage($this->main->getPrefix()),
+                transport: 'users-profile-group'
+            );
 
         return $this->main;
 

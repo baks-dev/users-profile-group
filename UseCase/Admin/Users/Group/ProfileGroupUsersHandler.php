@@ -26,6 +26,7 @@ declare(strict_types=1);
 namespace BaksDev\Users\Profile\Group\UseCase\Admin\Users\Group;
 
 
+use BaksDev\Core\Entity\AbstractHandler;
 use BaksDev\Core\Messenger\MessageDispatchInterface;
 use BaksDev\Users\Profile\Group\Entity\Users\ProfileGroupUsers;
 use BaksDev\Users\Profile\Group\Messenger\ProfileGroupMessage;
@@ -34,33 +35,14 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final readonly class ProfileGroupUsersHandler
+final  class ProfileGroupUsersHandler extends AbstractHandler
 {
-    public function __construct(
-        #[Target('usersProfileGroupLogger')] private LoggerInterface $logger,
-        private EntityManagerInterface $entityManager,
-        private ValidatorInterface $validator,
-        private MessageDispatchInterface $messageDispatch
-    ) {}
-
     /** @see ProfileGroupUsers */
     public function handle(ProfileGroupUsersDTO $command): string|ProfileGroupUsers
     {
-        /**
-         *  Валидация ProfileGroupUsersDTO
-         */
-        $errors = $this->validator->validate($command);
+        $this->setCommand($command);
 
-        if(count($errors) > 0)
-        {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [self::class.':'.__LINE__]);
-
-            return $uniqid;
-        }
-
-        $ProfileGroupUsers = $this->entityManager
+        $ProfileGroupUsers = $this
             ->getRepository(ProfileGroupUsers::class)
             ->findOneBy([
                 //'prefix' => $command->getPrefix(),
@@ -73,26 +55,18 @@ final readonly class ProfileGroupUsersHandler
             $ProfileGroupUsers = new ProfileGroupUsers();
         }
 
-        $this->entityManager->clear();
-
         $ProfileGroupUsers->setEntity($command);
-        $this->entityManager->persist($ProfileGroupUsers);
+        $this->validatorCollection->add($ProfileGroupUsers, context: [self::class.':'.__LINE__]);
 
-        /**
-         * Валидация ProfileGroupUsers
-         */
-        $errors = $this->validator->validate($ProfileGroupUsers);
 
-        if(count($errors) > 0)
+        /** Валидация всех объектов */
+        if($this->validatorCollection->isInvalid())
         {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [self::class.':'.__LINE__]);
-
-            return $uniqid;
+            return $this->validatorCollection->getErrorUniqid();
         }
 
-        $this->entityManager->flush();
+        $this->persist($ProfileGroupUsers);
+        $this->flush();
 
         /* Отправляем сообщение в шину */
         $this->messageDispatch

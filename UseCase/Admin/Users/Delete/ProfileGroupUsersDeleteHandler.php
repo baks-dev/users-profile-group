@@ -26,40 +26,16 @@ declare(strict_types=1);
 namespace BaksDev\Users\Profile\Group\UseCase\Admin\Users\Delete;
 
 
-use BaksDev\Core\Messenger\MessageDispatchInterface;
+use BaksDev\Core\Entity\AbstractHandler;
 use BaksDev\Users\Profile\Group\Entity\Users\ProfileGroupUsers;
 use BaksDev\Users\Profile\Group\Messenger\ProfileGroupMessage;
-use Doctrine\ORM\EntityManagerInterface;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\Attribute\Target;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-final readonly class ProfileGroupUsersDeleteHandler
+final class ProfileGroupUsersDeleteHandler extends AbstractHandler
 {
-    public function __construct(
-        #[Target('usersProfileGroupLogger')] private LoggerInterface $logger,
-        EntityManagerInterface $entityManager,
-        ValidatorInterface $validator,
-        MessageDispatchInterface $messageDispatch
-    ) {}
-
     /** @see ProfileGroupUsers */
     public function handle(ProfileGroupUsersDeleteDTO $command, bool $isAdmin): string|ProfileGroupUsers
     {
-        /**
-         *  Валидация ProfileGroupUsersDeleteDTO
-         */
-        $errors = $this->validator->validate($command);
-
-        if(count($errors) > 0)
-        {
-            /** Ошибка валидации */
-            $uniqid = uniqid('', false);
-            $this->logger->error(sprintf('%s: %s', $uniqid, $errors), [self::class.':'.__LINE__]);
-
-            return $uniqid;
-        }
-
+        $this->setCommand($command);
 
         $findOneBy['prefix'] = $command->getPrefix();
         $findOneBy['profile'] = $command->getProfile();
@@ -69,26 +45,20 @@ final readonly class ProfileGroupUsersDeleteHandler
             $findOneBy['authority'] = $command->getAuthority();
         }
 
-        $ProfileGroupUsers = $this->entityManager
+        $ProfileGroupUsers = $this
             ->getRepository(ProfileGroupUsers::class)
             ->findOneBy($findOneBy);
 
+        $this->validatorCollection->add($ProfileGroupUsers, context: [self::class.':'.__LINE__]);
 
-        if(!$ProfileGroupUsers)
+        /** Валидация всех объектов */
+        if($this->validatorCollection->isInvalid())
         {
-            $uniqid = uniqid('', false);
-            $errorsString = sprintf(
-                'Not found %s by prefix: %s',
-                ProfileGroupUsers::class,
-                $command->getPrefix()
-            );
-            $this->logger->error($uniqid.': '.$errorsString);
-
-            return $uniqid;
+            return $this->validatorCollection->getErrorUniqid();
         }
 
-        $this->entityManager->remove($ProfileGroupUsers);
-        $this->entityManager->flush();
+        $this->remove($ProfileGroupUsers);
+        $this->flush();
 
         /* Отправляем сообщение в шину */
         $this

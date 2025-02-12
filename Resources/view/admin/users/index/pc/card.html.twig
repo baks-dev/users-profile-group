@@ -6,6 +6,14 @@
     </td>
 
 
+    {% if is_granted('ROLE_ADMIN') %}
+        <td class="text-nowrap">
+            {# Владелец группы #}
+            {{ item.group_profile_username }}
+        </td>
+    {% endif %}
+
+
     <td class="text-nowrap">
         {# Пользовательское меню #}
         {{ item.group_name }}

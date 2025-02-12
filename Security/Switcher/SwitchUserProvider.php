@@ -146,7 +146,6 @@ final class SwitchUserProvider implements UserProviderInterface
         $save->expiresAfter(DateInterval::createFromDateString('1 weeks'));
         $AppCache->save($save);
 
-
         return $user;
     }
 }
