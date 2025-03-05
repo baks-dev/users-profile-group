@@ -64,7 +64,6 @@ final class AddController extends AbstractController
 
         if($profile)
         {
-
             $ProfileGroupUsers = $entityManager
                 ->getRepository(ProfileGroupUsers::class)
                 ->findOneBy(['profile' => $profile, 'authority' => $isAdminProfile]);
@@ -74,14 +73,14 @@ final class AddController extends AbstractController
 
         // Форма
         $form = $this->createForm(ProfileGroupUsersForm::class, $ProfileGroupUsersDTO, [
-            'action' => $this->generateUrl('users-profile-group:admin.users.add'),
+            'action' => $this->generateUrl('users-profile-group:admin.users.add', ['profile' => $profile]),
         ]);
 
         $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid() && $form->has('profile_group_users'))
         {
-            //$this->refreshTokenForm($form);
+            // $this->refreshTokenForm($form);
 
             if($isAdminProfile)
             {
@@ -94,7 +93,6 @@ final class AddController extends AbstractController
                 $UserProfileUid = $profileByEmail
                     ->email($ProfileGroupUsersDTO->getEmail())
                     ->find();
-
 
                 /**
                  * Если профиля пользователя по Email не найдено

@@ -40,7 +40,7 @@ final  class ProfileGroupUsersHandler extends AbstractHandler
     /** @see ProfileGroupUsers */
     public function handle(ProfileGroupUsersDTO $command): string|ProfileGroupUsers
     {
-        $this->setCommand($command);
+        //$this->setCommand($command);
 
         $ProfileGroupUsers = $this
             ->getRepository(ProfileGroupUsers::class)
@@ -50,13 +50,17 @@ final  class ProfileGroupUsersHandler extends AbstractHandler
                 'authority' => $command->getAuthority()
             ]);
 
+        dump($ProfileGroupUsers);  /* TODO: удалить !!! */
+
+
         if(!$ProfileGroupUsers)
         {
             $ProfileGroupUsers = new ProfileGroupUsers();
+            $this->persist($ProfileGroupUsers);
         }
 
         $ProfileGroupUsers->setEntity($command);
-        $this->validatorCollection->add($ProfileGroupUsers, context: [self::class.':'.__LINE__]);
+        //$this->validatorCollection->add($ProfileGroupUsers, context: [self::class.':'.__LINE__]);
 
 
         /** Валидация всех объектов */
@@ -65,8 +69,11 @@ final  class ProfileGroupUsersHandler extends AbstractHandler
             return $this->validatorCollection->getErrorUniqid();
         }
 
-        $this->persist($ProfileGroupUsers);
+        dump($ProfileGroupUsers); /* TODO: удалить !!! */
+
         $this->flush();
+
+        dd(5564); /* TODO: удалить !!! */
 
         /* Отправляем сообщение в шину */
         $this->messageDispatch
