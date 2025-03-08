@@ -45,23 +45,24 @@ final  class ProfileGroupUsersHandler extends AbstractHandler
         $ProfileGroupUsers = $this
             ->getRepository(ProfileGroupUsers::class)
             ->findOneBy([
-                //'prefix' => $command->getPrefix(),
+                'prefix' => $command->getPrefix(),
                 'profile' => $command->getProfile(),
                 'authority' => $command->getAuthority()
             ]);
-
-        dump($ProfileGroupUsers);  /* TODO: удалить !!! */
 
 
         if(!$ProfileGroupUsers)
         {
             $ProfileGroupUsers = new ProfileGroupUsers();
+            $ProfileGroupUsers->setEntity($command);
             $this->persist($ProfileGroupUsers);
         }
+        else
+        {
+            $ProfileGroupUsers->setEntity($command);
+        }
 
-        $ProfileGroupUsers->setEntity($command);
-        //$this->validatorCollection->add($ProfileGroupUsers, context: [self::class.':'.__LINE__]);
-
+        $this->validatorCollection->add($ProfileGroupUsers, context: [self::class.':'.__LINE__]);
 
         /** Валидация всех объектов */
         if($this->validatorCollection->isInvalid())
@@ -69,11 +70,8 @@ final  class ProfileGroupUsersHandler extends AbstractHandler
             return $this->validatorCollection->getErrorUniqid();
         }
 
-        dump($ProfileGroupUsers); /* TODO: удалить !!! */
-
         $this->flush();
 
-        dd(5564); /* TODO: удалить !!! */
 
         /* Отправляем сообщение в шину */
         $this->messageDispatch
