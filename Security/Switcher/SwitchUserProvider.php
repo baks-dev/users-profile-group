@@ -31,8 +31,8 @@ use BaksDev\Users\Profile\UserProfile\Repository\UserByUserProfile\UserByUserPro
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use BaksDev\Users\User\Entity\User;
 use BaksDev\Users\User\Repository\GetUserById\GetUserByIdInterface;
-use DateInterval;
 use InvalidArgumentException;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\SwitchUserToken;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -53,7 +53,8 @@ final class SwitchUserProvider implements UserProviderInterface
         TokenStorageInterface $tokenStorage,
         GetUserByIdInterface $getUserById,
         CurrentUserProfileInterface $currentUserProfile,
-        UserByUserProfileInterface $userByUserProfile
+        UserByUserProfileInterface $userByUserProfile,
+        private readonly RequestStack $request
     )
     {
 
@@ -140,11 +141,15 @@ final class SwitchUserProvider implements UserProviderInterface
         $user->setProfile($authority);
 
         /** Тумблер профилей активного пользователя */
-        $AppCache = $this->cache->init('Authority', 0);
-        $save = $AppCache->getItem($current->getUserIdentifier());
-        $save->set($authority);
-        $save->expiresAfter(DateInterval::createFromDateString('1 weeks'));
-        $AppCache->save($save);
+        $Session = $this->request->getSession();
+        $Session->set('Authority', $authority);
+        $Session->save();
+
+        //        $AppCache = $this->cache->init('Authority', 0);
+        //        $save = $AppCache->getItem($current->getUserIdentifier());
+        //        $save->set($authority);
+        //        $save->expiresAfter(DateInterval::createFromDateString('1 weeks'));
+        //        $AppCache->save($save);
 
         return $user;
     }

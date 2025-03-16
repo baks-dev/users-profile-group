@@ -57,9 +57,12 @@ final class SwitchUserListener
         if($event->getRequest()->get('authority') === '_exit')
         {
             /** Сбрасываем тумблер профиля */
-            $AppCache = $this->cache->init('Authority');
-            $AppCache->delete($event->getTargetUser()->getUserIdentifier());
-            $AppCache->delete($event->getToken()?->getUserIdentifier());
+            $Session = $event->getRequest()->getSession();
+            $Session->remove('Authority');
+
+            //            $AppCache = $this->cache->init('Authority');
+            //            $AppCache->delete($event->getTargetUser()->getUserIdentifier());
+            //            $AppCache->delete($event->getToken()?->getUserIdentifier());
         }
 
         $this->redirect = $event->getRequest()->headers->get('referer');

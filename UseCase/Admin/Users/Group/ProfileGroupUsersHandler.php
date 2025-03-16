@@ -45,11 +45,10 @@ final  class ProfileGroupUsersHandler extends AbstractHandler
         $ProfileGroupUsers = $this
             ->getRepository(ProfileGroupUsers::class)
             ->findOneBy([
-                'prefix' => $command->getPrefix(),
+                //'prefix' => $command->getPrefix(),
                 'profile' => $command->getProfile(),
                 'authority' => $command->getAuthority()
             ]);
-
 
         if(!$ProfileGroupUsers)
         {

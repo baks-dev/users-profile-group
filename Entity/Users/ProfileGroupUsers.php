@@ -45,7 +45,7 @@ class ProfileGroupUsers extends EntityState
     #[Assert\NotBlank]
     #[ORM\Id]
     #[ORM\Column(type: GroupPrefix::TYPE)]
-    private readonly GroupPrefix $prefix;
+    private GroupPrefix $prefix;
 
     /**
      * Профиль пользователя в группе
