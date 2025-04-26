@@ -51,7 +51,7 @@ class ProfileGroupModify extends EntityEvent
     #[Assert\NotBlank]
     #[Assert\Uuid]
     #[ORM\Id]
-    #[ORM\OneToOne(inversedBy: 'modify', targetEntity: ProfileGroupEvent::class)]
+    #[ORM\OneToOne(targetEntity: ProfileGroupEvent::class, inversedBy: 'modify')]
     #[ORM\JoinColumn(name: 'event', referencedColumnName: 'id')]
     private ProfileGroupEvent $event;
 

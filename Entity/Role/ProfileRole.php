@@ -69,7 +69,7 @@ class ProfileRole extends EntityEvent
      * Правила роли
      */
     #[Assert\Valid]
-    #[ORM\OneToMany(targetEntity: ProfileVoter::class, mappedBy: 'role', cascade: ['all'])]
+    #[ORM\OneToMany(targetEntity: ProfileVoter::class, mappedBy: 'role', cascade: ['all'], fetch: 'EAGER')]
     private Collection $voter;
 
     public function __construct(ProfileGroupEvent $event)

@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -30,14 +30,9 @@ use BaksDev\Users\Profile\Group\Entity\Event\ProfileGroupEvent;
 use BaksDev\Users\Profile\Group\Entity\ProfileGroup;
 use BaksDev\Users\Profile\Group\Type\Prefix\Group\GroupPrefix;
 
-final class ProfileGroupCurrentEventRepository implements ProfileGroupCurrentEventInterface
+final readonly class ProfileGroupCurrentEventRepository implements ProfileGroupCurrentEventInterface
 {
-    private ORMQueryBuilder $ORMQueryBuilder;
-
-    public function __construct(ORMQueryBuilder $ORMQueryBuilder)
-    {
-        $this->ORMQueryBuilder = $ORMQueryBuilder;
-    }
+    public function __construct(private ORMQueryBuilder $ORMQueryBuilder) {}
 
     /**
      * Получает активное событие группы
@@ -51,7 +46,11 @@ final class ProfileGroupCurrentEventRepository implements ProfileGroupCurrentEve
         $orm
             ->from(ProfileGroup::class, 'profile_group')
             ->where('profile_group.prefix = :prefix')
-            ->setParameter('prefix', $prefix, GroupPrefix::TYPE);
+            ->setParameter(
+                key: 'prefix',
+                value: $prefix,
+                type: GroupPrefix::TYPE
+            );
 
         $orm->join(
             ProfileGroupEvent::class,
@@ -60,6 +59,6 @@ final class ProfileGroupCurrentEventRepository implements ProfileGroupCurrentEve
             'event.id = profile_group.event'
         );
 
-        return $orm->getQuery()->getOneOrNullResult();
+        return $orm->getOneOrNullResult();
     }
 }
