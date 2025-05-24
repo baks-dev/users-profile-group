@@ -65,7 +65,7 @@ final readonly class ProfileGroupByUserProfileRepository implements ProfileGroup
         }
 
         $group = $dbal
-            ->enableCache('users-profile-group', 3600)
+            ->enableCache('users-profile-group', '1 hour')
             ->fetchOne();
 
         return $group ? new GroupPrefix($group) : false;
