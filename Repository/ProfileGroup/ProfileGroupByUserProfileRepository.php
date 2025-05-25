@@ -49,20 +49,29 @@ final readonly class ProfileGroupByUserProfileRepository implements ProfileGroup
         $dbal
             ->select('groups.prefix')
             ->from(ProfileGroupUsers::class, 'groups')
-            ->where('groups.profile = :profile')
-            ->setParameter('profile', $profile, UserProfileUid::TYPE);
+            ->where('groups.authority IS NULL');
 
-        /** Если доверительная группа */
-        if($authority)
+        /**
+         * Если передана доверительная группа
+         */
+        if($authority instanceof UserProfileUid)
         {
-            $dbal->andWhere('groups.authority = :authority')
-                ->setParameter('authority', $authority, UserProfileUid::TYPE);
+            $dbal
+                ->where('groups.authority = :authority')
+                ->setParameter(
+                    key: 'authority',
+                    value: $authority,
+                    type: UserProfileUid::TYPE,
+                );
         }
 
-        if($authority === null)
-        {
-            $dbal->andWhere('groups.authority IS NULL');
-        }
+        $dbal
+            ->andWhere('groups.profile = :profile')
+            ->setParameter(
+                key: 'profile',
+                value: $profile,
+                type: UserProfileUid::TYPE,
+            );
 
         $group = $dbal
             ->enableCache('users-profile-group', '1 hour')
