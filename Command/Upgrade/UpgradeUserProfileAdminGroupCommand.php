@@ -1,17 +1,17 @@
 <?php
 /*
- *  Copyright 2023.  Baks.dev <admin@baks.dev>
- *
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
+ *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
  *  in the Software without restriction, including without limitation the rights
  *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  *  copies of the Software, and to permit persons to whom the Software is furnished
  *  to do so, subject to the following conditions:
- *
+ *  
  *  The above copyright notice and this permission notice shall be included in all
  *  copies or substantial portions of the Software.
- *
+ *  
  *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  *  FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
@@ -30,6 +30,7 @@ use BaksDev\Users\Profile\Group\Type\Prefix\Group\GroupPrefix;
 use BaksDev\Users\Profile\Group\UseCase\Admin\Users\Group\ProfileGroupUsersDTO;
 use BaksDev\Users\Profile\Group\UseCase\Admin\Users\Group\ProfileGroupUsersHandler;
 use BaksDev\Users\Profile\UserProfile\Repository\AdminUserProfile\AdminUserProfileInterface;
+use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -67,36 +68,36 @@ class UpgradeUserProfileAdminGroupCommand extends Command implements ProjectUpgr
         /** Проверяем, была ли добавлена группа профилю */
         $exists = $this->existAdminProfile->isExistsAdminProfile();
 
-        if(!$exists)
+        if(true === $exists)
         {
-            $io = new SymfonyStyle($input, $output);
-            $io->text('Обновляем группу профиля администратора ресурса');
+            return Command::SUCCESS;
+        }
 
-            /** Получаем профиль пользователя администратора ресурса */
-            $UserProfileUid = $this->adminUserProfile->fetchUserProfile();
+        $io = new SymfonyStyle($input, $output);
+        $io->text('Обновляем группу профиля администратора ресурса');
 
-            if(!$UserProfileUid)
-            {
-                $io->warning('Необходимо добавить профиль пользователю либо сделать его активным. Профиль администратора не найден.');
-                return Command::INVALID;
-            }
+        /** Получаем профиль пользователя администратора ресурса */
+        $UserProfileUid = $this->adminUserProfile->fetchUserProfile();
 
-            $ProfileGroupUsersDTO = new ProfileGroupUsersDTO();
-            $ProfileGroupUsersDTO
-                ->setProfile($UserProfileUid)
-                ->setPrefix(new  GroupPrefix('ROLE_ADMIN'));
+        if(false === ($UserProfileUid instanceof UserProfileUid))
+        {
+            $io->warning('Необходимо добавить профиль пользователю либо сделать его активным. Профиль администратора не найден.');
+            return Command::INVALID;
+        }
 
-            $handle = $this->profileGroupUsersHandler->handle($ProfileGroupUsersDTO);
+        $ProfileGroupUsersDTO = new ProfileGroupUsersDTO()
+            ->setProfile($UserProfileUid)
+            ->setPrefix(new  GroupPrefix('ROLE_ADMIN'));
 
-            if(!$handle instanceof ProfileGroupUsers)
-            {
-                $io->success(
-                    sprintf('Ошибка %s при добавлении профиля в группу администратора ресурса', $handle)
-                );
+        $handle = $this->profileGroupUsersHandler->handle($ProfileGroupUsersDTO);
 
-                return Command::FAILURE;
-            }
+        if(false === ($handle instanceof ProfileGroupUsers))
+        {
+            $io->success(
+                sprintf('Ошибка %s при добавлении профиля в группу администратора ресурса', $handle),
+            );
 
+            return Command::FAILURE;
         }
 
         return Command::SUCCESS;
