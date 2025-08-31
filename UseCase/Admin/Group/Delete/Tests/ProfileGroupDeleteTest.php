@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -34,23 +34,21 @@ use BaksDev\Users\Profile\Group\UseCase\Admin\Group\Delete\ProfileGroupDeleteDTO
 use BaksDev\Users\Profile\Group\UseCase\Admin\Group\Delete\ProfileGroupDeleteHandler;
 use BaksDev\Users\Profile\Group\UseCase\Admin\Group\NewEdit\ProfileGroupDTO;
 use BaksDev\Users\Profile\Group\UseCase\Admin\Group\NewEdit\Role\ProfileRoleDTO;
+use BaksDev\Users\Profile\Group\UseCase\Admin\Group\NewEdit\Tests\ProfileGroupEditTest;
 use BaksDev\Users\Profile\Group\UseCase\Admin\Group\NewEdit\Trans\ProfileGroupTranslateDTO;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\DependsOnClass;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group users-profile-group
- *
- * @depends BaksDev\Users\Profile\Group\UseCase\Admin\Group\NewEdit\Tests\ProfileGroupEditTest::class
- *
- * @see     ProfileGroupEditTest
- */
+#[Group('users-profile-group')]
 #[When(env: 'test')]
 final class ProfileGroupDeleteTest extends KernelTestCase
 {
-
+    #[DependsOnClass(ProfileGroupEditTest::class)]
     public function testUseCase(): void
     {
         self::bootKernel();
@@ -97,9 +95,7 @@ final class ProfileGroupDeleteTest extends KernelTestCase
 
     }
 
-    /**
-     * @depends testUseCase
-     */
+    #[Depends('testUseCase')]
     public function testComplete(): void
     {
         /** @var EntityManagerInterface $em */

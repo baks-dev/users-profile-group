@@ -26,16 +26,12 @@ namespace BaksDev\Users\Profile\Group\Controller\Admin\Group\Tests;
 use BaksDev\Users\Profile\Group\Type\Event\ProfileGroupEventUid;
 use BaksDev\Users\Profile\Group\UseCase\Admin\Group\NewEdit\Tests\ProfileGroupNewTest;
 use BaksDev\Users\User\Tests\TestUserAccount;
+use PHPUnit\Framework\Attributes\DependsOnClass;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group users-profile-group
- *
- * @depends BaksDev\Users\Profile\Group\UseCase\Admin\Group\NewEdit\Tests\ProfileGroupNewTest::class
- *
- * @see     ProfileGroupNewTest
- */
+#[Group('users-profile-group')]
 #[When(env: 'test')]
 final class EditControllerTest extends WebTestCase
 {
@@ -43,7 +39,7 @@ final class EditControllerTest extends WebTestCase
 
     private const string ROLE = 'ROLE_PROFILE_GROUP_EDIT';
 
-
+    #[DependsOnClass(ProfileGroupNewTest::class)]
     public function testRoleSuccessful(): void
     {
         self::ensureKernelShutdown();
@@ -67,6 +63,7 @@ final class EditControllerTest extends WebTestCase
     /**
      * Доступ по роли ROLE_ADMIN
      */
+    #[DependsOnClass(ProfileGroupNewTest::class)]
     public function testRoleAdminSuccessful(): void
     {
 
@@ -91,6 +88,7 @@ final class EditControllerTest extends WebTestCase
     /**
      * Доступ по роли ROLE_USER
      */
+    #[DependsOnClass(ProfileGroupNewTest::class)]
     public function testRoleUserDeny(): void
     {
 
@@ -112,6 +110,7 @@ final class EditControllerTest extends WebTestCase
     }
 
     /** Доступ по без роли */
+    #[DependsOnClass(ProfileGroupNewTest::class)]
     public function testGuestFiled(): void
     {
 

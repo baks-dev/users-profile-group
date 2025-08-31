@@ -1,6 +1,6 @@
 <?php
 /*
- *  Copyright 2024.  Baks.dev <admin@baks.dev>
+ *  Copyright 2025.  Baks.dev <admin@baks.dev>
  *  
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -37,12 +37,11 @@ use BaksDev\Users\Profile\Group\UseCase\Admin\Group\NewEdit\Role\Voter\ProfileVo
 use BaksDev\Users\Profile\Group\UseCase\Admin\Group\NewEdit\Trans\ProfileGroupTranslateDTO;
 use BaksDev\Users\Profile\UserProfile\Type\Id\UserProfileUid;
 use Doctrine\ORM\EntityManagerInterface;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group users-profile-group
- */
+#[Group('users-profile-group')]
 #[When(env: 'test')]
 final class ProfileGroupNewTest extends KernelTestCase
 {

@@ -24,12 +24,11 @@
 namespace BaksDev\Users\Profile\Group\Controller\Admin\Group\Tests;
 
 use BaksDev\Users\User\Tests\TestUserAccount;
+use PHPUnit\Framework\Attributes\Group;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\Attribute\When;
 
-/**
- * @group users-profile-group
- */
+#[Group('users-profile-group')]
 #[When(env: 'test')]
 final class IndexControllerTest extends WebTestCase
 {
