@@ -174,16 +174,14 @@ final class AllProfileGroupUsersRepository implements AllProfileGroupUsersInterf
                 'users_profile_avatar.event = users_profile.event'
             );
 
-
         /* Поиск */
         if($this->search?->getQuery())
         {
-            $this->DBALQueryBuilder
+            $dbal
                 ->createSearchQueryBuilder($this->search)
                 ->addSearchEqualUid('users.profile')
                 ->addSearchLike('trans.name')
                 ->addSearchLike('users_profile_personal.username');
-
         }
 
         return $this->paginator->fetchAllAssociative($dbal);
